@@ -1,5 +1,7 @@
 package com.gotowork.msghash;
 
+import com.orm.SugarRecord;
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -8,9 +10,12 @@ import java.util.Date;
  * Created by sysop on 23.04.2018.
  */
 
-public class Message {
-    private String name, text, time, hash;
-    private boolean isPinned;
+public class Message extends SugarRecord<Message> {
+    String name, text, time, hash;
+    boolean isPinned;
+
+    public Message() {
+    }
 
     public Message(String name, String text) {
         this.name = name;
