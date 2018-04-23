@@ -4,15 +4,15 @@ import com.orm.SugarRecord;
 
 import java.util.Calendar;
 import java.util.Date;
-
+import java.util.Locale;
 
 /**
  * Created by sysop on 23.04.2018.
  */
 
 public class Message extends SugarRecord<Message> {
-    String name, text, time, hash;
-    boolean isPinned;
+    private String name, text, time, fullTime, hash;
+    private boolean isPinned;
 
     public Message() {
     }
@@ -25,13 +25,15 @@ public class Message extends SugarRecord<Message> {
         setHash();
     }
 
-    public void pin(){
+    public void pin() {
         isPinned = true;
     }
 
     private void setTime() {
         Date currentTime = Calendar.getInstance().getTime();
-        time = currentTime.toString();
+        Calendar calendar = Calendar.getInstance(Locale.getDefault());
+        time = String.valueOf(calendar.get(Calendar.HOUR_OF_DAY)) + ":" + String.valueOf(calendar.get(Calendar.MINUTE));
+        fullTime = currentTime.toString();
     }
 
     private void setHash() {
@@ -49,6 +51,10 @@ public class Message extends SugarRecord<Message> {
 
     public String getText() {
         return text;
+    }
+
+    public String getFullTime() {
+        return fullTime;
     }
 
     public String getTime() {
