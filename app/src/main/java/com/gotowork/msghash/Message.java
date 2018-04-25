@@ -29,6 +29,7 @@ public class Message extends SugarRecord<Message> {
     public void pin() {
         isPinned = true;
         save();
+        Sawtooth.sendTransaction(hash);
     }
 
     public boolean checkPinned() {

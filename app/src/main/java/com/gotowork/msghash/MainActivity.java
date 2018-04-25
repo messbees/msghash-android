@@ -7,7 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
-import android.widget.ArrayAdapter;
+import java.security.KeyPair;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     ListView listView;
     MessageAdapter messageAdapter;
     MainActivity context;
+    KeyPair keyPair;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +29,16 @@ public class MainActivity extends AppCompatActivity {
         messages = Message.listAll(Message.class);
         messageAdapter = new MessageAdapter(this, messages);
         initializeComponents();
+
+        try {
+            keyPair = Sawtooth.getKeyPair();
+            Toast.makeText(context, keyPair.getPrivate().toString(), Toast.LENGTH_LONG).show();
+        }
+        catch (Exception e) {
+            Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+        }
+
+
     }
 
     private void initializeComponents() {
@@ -48,5 +59,9 @@ public class MainActivity extends AppCompatActivity {
                 editText.setText("");
             }
         });
+    }
+
+    void generateKeys() {
+
     }
 }
