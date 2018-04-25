@@ -45,18 +45,20 @@ public class MessageAdapter extends BaseAdapter {
 
         final Message message = getMessage(position);
 
+        final Button buttonDelete = (Button) view.findViewById(R.id.buttonDelete);
+        final Button buttonPin = (Button) view.findViewById(R.id.buttonPin);
         ((TextView) view.findViewById(R.id.messageName)).setText(message.getName());
         ((TextView) view.findViewById(R.id.messageText)).setText(message.getText());
         ((TextView) view.findViewById(R.id.messageTime)).setText(message.getTime());
-        /*final Button buttonDelete = (Button) view.findViewById(R.id.buttonDelete);
-        buttonDelete.setOnClickListener(new View.OnClickListener() {
+
+        /*buttonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 message.delete();
                 update();
             }
         });
-        final Button buttonPin = (Button) view.findViewById(R.id.buttonPin);
+
         buttonPin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
