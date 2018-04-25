@@ -35,9 +35,11 @@ public class Message extends SugarRecord<Message> {
         return isPinned;
     }
 
-    /*public boolean checkOld() {
+    public boolean checkOld() {
         Date dateCurrent = Calendar.getInstance().getTime();
         Date dateMessage = new Date();
+        String[] strings = fullTime.split(" ");
+        String date = strings[0];
         try {
             dateMessage = new SimpleDateFormat("dd/MM/yyyy").parse(date);
         }
@@ -49,35 +51,37 @@ public class Message extends SugarRecord<Message> {
             return true;
         else
             return false;
-    }*/
+    }
 
     private void setTime() {
         int day, month, year;
         Date currentTime = Calendar.getInstance().getTime();
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
 
-/*        date = "";
+        fullTime = "";
         day = calendar.get(Calendar.DAY_OF_MONTH);
         month = calendar.get(Calendar.MONTH);
         year = calendar.get(Calendar.YEAR);
         if (day < 10)
-            date += "0";
-        date += day;
-        date += "/";
+            fullTime += "0";
+        fullTime += day;
+        fullTime += "/";
         if (month < 10)
-            date += "0";
-        date += month;
-        date += "/";
-        date += year;
-*/
+            fullTime += "0";
+        fullTime += month;
+        fullTime += "/";
+        fullTime += year;
+
         time = String.valueOf(calendar.get(Calendar.HOUR_OF_DAY)) + ":" + String.valueOf(calendar.get(Calendar.MINUTE));
-        fullTime = currentTime.toString();
+
+        fullTime += time;
+
     }
 
     private void setHash() {
         String temp = "";
-        temp += name;
         temp += text;
+        temp += name;
         temp += time;
         temp = Hashing.getHash(temp);
         this.hash = temp;
@@ -95,10 +99,6 @@ public class Message extends SugarRecord<Message> {
         return fullTime;
     }
 
-/*    public String getDate() {
-        return date;
-    }
-*/
     public String getTime() {
         return time;
     }

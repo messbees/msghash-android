@@ -49,7 +49,10 @@ public class MessageAdapter extends BaseAdapter {
         final Button buttonPin = (Button) view.findViewById(R.id.buttonPin);
         ((TextView) view.findViewById(R.id.messageName)).setText(message.getName());
         ((TextView) view.findViewById(R.id.messageText)).setText(message.getText());
-        ((TextView) view.findViewById(R.id.messageTime)).setText(message.getTime());
+        if (message.checkOld())
+            ((TextView) view.findViewById(R.id.messageTime)).setText(message.getFullTime());
+        else
+            ((TextView) view.findViewById(R.id.messageTime)).setText(message.getTime());
 
         if (message.checkPinned()) {
             buttonDelete.setEnabled(false);
