@@ -51,11 +51,20 @@ public class MessageAdapter extends BaseAdapter {
         ((TextView) view.findViewById(R.id.messageText)).setText(message.getText());
         ((TextView) view.findViewById(R.id.messageTime)).setText(message.getTime());
 
-        /*buttonDelete.setOnClickListener(new View.OnClickListener() {
+        if (message.checkPinned()) {
+            buttonDelete.setEnabled(false);
+            buttonPin.setEnabled(false);
+            update();
+        }
+
+        buttonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                message.delete();
-                update();
+                if (!message.checkPinned()) {
+                    objects.remove(message);
+                    update();
+                    message.delete();
+                }
             }
         });
 
@@ -67,7 +76,7 @@ public class MessageAdapter extends BaseAdapter {
                 buttonPin.setEnabled(false);
                 update();
             }
-        });*/
+        });
 
         return view;
     }

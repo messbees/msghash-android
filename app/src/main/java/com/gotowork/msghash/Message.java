@@ -2,6 +2,7 @@ package com.gotowork.msghash;
 
 import com.orm.SugarRecord;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -27,11 +28,48 @@ public class Message extends SugarRecord<Message> {
 
     public void pin() {
         isPinned = true;
+        save();
     }
 
+    public boolean checkPinned() {
+        return isPinned;
+    }
+
+    /*public boolean checkOld() {
+        Date dateCurrent = Calendar.getInstance().getTime();
+        Date dateMessage = new Date();
+        try {
+            dateMessage = new SimpleDateFormat("dd/MM/yyyy").parse(date);
+        }
+        catch (Exception e) {
+
+        }
+        int temp = dateCurrent.compareTo(dateMessage);
+        if (temp == 1)
+            return true;
+        else
+            return false;
+    }*/
+
     private void setTime() {
+        int day, month, year;
         Date currentTime = Calendar.getInstance().getTime();
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
+
+/*        date = "";
+        day = calendar.get(Calendar.DAY_OF_MONTH);
+        month = calendar.get(Calendar.MONTH);
+        year = calendar.get(Calendar.YEAR);
+        if (day < 10)
+            date += "0";
+        date += day;
+        date += "/";
+        if (month < 10)
+            date += "0";
+        date += month;
+        date += "/";
+        date += year;
+*/
         time = String.valueOf(calendar.get(Calendar.HOUR_OF_DAY)) + ":" + String.valueOf(calendar.get(Calendar.MINUTE));
         fullTime = currentTime.toString();
     }
@@ -57,6 +95,10 @@ public class Message extends SugarRecord<Message> {
         return fullTime;
     }
 
+/*    public String getDate() {
+        return date;
+    }
+*/
     public String getTime() {
         return time;
     }
