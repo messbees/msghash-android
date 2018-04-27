@@ -8,16 +8,20 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 import java.security.KeyPair;
+import java.security.Security;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     public EditText editText, editName;
     public Button buttonSend;
+
     List<Message> messages;
     ListView listView;
     MessageAdapter messageAdapter;
+
     MainActivity context;
+
     KeyPair keyPair;
 
     @Override
@@ -25,18 +29,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this;
+        Security.insertProviderAt(new org.spongycastle.jce.provider.BouncyCastleProvider(), 1);
 
         messages = Message.listAll(Message.class);
         messageAdapter = new MessageAdapter(this, messages);
         initializeComponents();
 
-        try {
+        /*try {
             keyPair = Sawtooth.getKeyPair();
             Toast.makeText(context, keyPair.getPrivate().toString(), Toast.LENGTH_LONG).show();
         }
         catch (Exception e) {
             Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-        }
+        }*/
 
 
     }
