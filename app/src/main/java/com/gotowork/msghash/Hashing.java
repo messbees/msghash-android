@@ -1,5 +1,7 @@
 package com.gotowork.msghash;
 
+import android.widget.Toast;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -12,34 +14,21 @@ import java.util.Formatter;
 public class Hashing {
     public static String getHash(String string)
     {
-        String sha1 = "";
-        try
-        {
-            MessageDigest crypt = MessageDigest.getInstance("SHA-1");
-            crypt.reset();
-            crypt.update(string.getBytes("UTF-8"));
-            sha1 = byteToHex(crypt.digest());
-        }
-        catch(NoSuchAlgorithmException e)
-        {
-            e.printStackTrace();
-        }
-        catch(UnsupportedEncodingException e)
-        {
-            e.printStackTrace();
-        }
-        return sha1;
-    }
+        String sha512 = "";
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-512");
 
-    private static String byteToHex(final byte[] hash)
-    {
-        Formatter formatter = new Formatter();
-        for (byte b : hash)
-        {
-            formatter.format("%02x", b);
+            byte[] digest = messageDigest.digest(string.getBytes());
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < digest.length; i++) {
+                stringBuilder.append(Integer.toString((digest[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            sha512 = stringBuilder.toString();
+            Toast.makeText(MainActivity.context, sha512, Toast.LENGTH_LONG).show();
         }
-        String result = formatter.toString();
-        formatter.close();
-        return result;
+        catch (Exception e) {
+            Toast.makeText(MainActivity.context, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+        }
+        return sha512;
     }
 }
