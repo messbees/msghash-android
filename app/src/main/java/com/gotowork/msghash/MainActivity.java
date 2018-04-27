@@ -8,8 +8,11 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 import java.security.KeyPair;
+import java.security.PublicKey;
 import java.security.Security;
 import java.util.List;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
     MainActivity context;
 
-    KeyPair keyPair;
+    private String keyPublic, keyPrivate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,18 +33,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         context = this;
         Security.insertProviderAt(new org.spongycastle.jce.provider.BouncyCastleProvider(), 1);
+        KeyPair keyPair;
+        loadKeys();
 
         messages = Message.listAll(Message.class);
         messageAdapter = new MessageAdapter(this, messages);
         initializeComponents();
 
-        /*try {
-            keyPair = Sawtooth.getKeyPair();
-            Toast.makeText(context, keyPair.getPrivate().toString(), Toast.LENGTH_LONG).show();
-        }
-        catch (Exception e) {
-            Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-        }*/
+        Toast.makeText(context, "private: " + keyPrivate + "\n" + "public: " + keyPublic, Toast.LENGTH_LONG).show();
 
 
     }
@@ -66,7 +65,31 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    void generateKeys() {
+    private void generateKeys() {
 
+    }
+
+    private void saveKeys() {
+        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        Editor editor = sharedPreferences.edit();
+        editor.putString("private", keyPrivate);
+        editor.putString("public", keyPublic);
+    }
+
+    private void loadKeys() {
+        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        keyPrivate = sharedPreferences.getString("private", "");
+        keyPublic = sharedPreferences.getString("public", "");
+        if (keyPublic == "" || keyPrivate == "") {
+            try {
+                KeyPair keyPair = Sawtooth.getKeyPair();
+                keyPrivate = keyPair.getPrivate().toString();
+                keyPublic = keyPair.getPublic().toString();
+                saveKeys();
+            }
+            catch (Exception e) {
+                Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }
