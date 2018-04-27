@@ -2,6 +2,8 @@ package com.gotowork.msghash;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -64,8 +66,30 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void generateKeys() {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // получим идентификатор выбранного пункта меню
+        int id = item.getItemId();
+
+        // Операции для выбранного пункта меню
+        switch (id) {
+            case R.id.action_settings:
+                return true;
+            case R.id.action_show_keys:
+                Toast.makeText(context, "private: " + keyPrivate + "\n" + "public: " + keyPublic, Toast.LENGTH_LONG).show();
+                return true;
+            case R.id.action_check_hashing_library:
+                Toast.makeText(context, Hashing.getHash("sample"), Toast.LENGTH_LONG).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void saveKeys() {
