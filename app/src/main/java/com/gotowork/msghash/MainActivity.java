@@ -8,7 +8,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 import java.security.KeyPair;
-import java.security.PublicKey;
 import java.security.Security;
 import java.util.List;
 import android.content.SharedPreferences;
@@ -23,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     ListView listView;
     MessageAdapter messageAdapter;
 
-    MainActivity context;
+    public static MainActivity context;
 
     private String keyPublic, keyPrivate;
 
