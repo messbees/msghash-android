@@ -44,8 +44,13 @@ public class MainActivity extends AppCompatActivity {
 
         messages = Message.listAll(Message.class);
         messageAdapter = new MessageAdapter(this, messages);
-        initializeComponents();
+        try {
+            initializeComponents();
         }
+        catch (Exception e) {
+            Toast.makeText(context, e.toString()+" "+e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
 
     private void initializeComponents() {
         editText = (EditText) findViewById(R.id.editText);
