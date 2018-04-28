@@ -1,30 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.preference.PreferenceScreen
+<PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <android.support.v7.preference.PreferenceCategory
-        android:title="@string/keys">
-        <PreferenceScreen
-            android:key="manage_keys"
-            android:summary="@string/manage_keys_desc"
-            android:title="@string/manage_keys">
-            <Preference android:title="@string/copy_public"
-                android:key="copy_public">
-            </Preference>
-            <Preference android:title="@string/copy_private"
-                android:key="copy_private">
-            </Preference>
-            <Preference android:title="@string/set_keys"
-                android:key="set_keys"
-                android:summary="@string/coming_soon">
-            </Preference>
-        </PreferenceScreen>
-    </android.support.v7.preference.PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/keys"
+        android:key="key_cat">
+        <Preference android:title="@string/copy_public"
+            android:key="copy_public">
+        </Preference>
+        <Preference android:title="@string/copy_private"
+            android:key="copy_private">
+        </Preference>
+        <Preference android:title="@string/set_keys"
+            android:key="set_keys"
+            android:summary="@string/coming_soon">
+        </Preference>
+    </PreferenceCategory>
 
-    <android.support.v7.preference.PreferenceCategory
-        android:title="@string/debug">
+    <PreferenceCategory
+        android:title="@string/debug"
+        android:key="deb_cat">
         <Preference android:title="@string/check_hash"
             android:key="check_hash"
             android:summary="@string/check_hash_desc"/>
-    </android.support.v7.preference.PreferenceCategory>
-</android.support.v7.preference.PreferenceScreen>
+        <Preference android:title="Copy encoded payload with verb:verb and message:message"
+            android:key="copy_payload"
+            android:summary="@string/check_hash_desc"/>
+
+    </PreferenceCategory>
+</PreferenceScreen>
