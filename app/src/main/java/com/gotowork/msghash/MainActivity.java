@@ -1,5 +1,6 @@
 package com.gotowork.msghash;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -40,11 +41,7 @@ public class MainActivity extends AppCompatActivity {
         messages = Message.listAll(Message.class);
         messageAdapter = new MessageAdapter(this, messages);
         initializeComponents();
-
-        Toast.makeText(context, "private: " + keyPrivate + "\n" + "public: " + keyPublic, Toast.LENGTH_LONG).show();
-
-
-    }
+        }
 
     private void initializeComponents() {
         editText = (EditText) findViewById(R.id.editText);
@@ -74,12 +71,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // получим идентификатор выбранного пункта меню
         int id = item.getItemId();
-
-        // Операции для выбранного пункта меню
         switch (id) {
             case R.id.action_settings:
+                Intent intent = new Intent(context, SettingsActivity.class);
+                startActivity(intent);
                 return true;
             case R.id.action_show_keys:
                 Toast.makeText(context, "private: " + keyPrivate + "\n" + "public: " + keyPublic, Toast.LENGTH_LONG).show();
