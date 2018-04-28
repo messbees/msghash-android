@@ -12,7 +12,7 @@
     <string name="manage_keys">Manage keys</string>
     <string name="manage_keys_desc">Actions with public and private keys</string>
     <string name="check_hash">Check hashing library</string>
-    <string name="check_hash_desc">Hash string "sample" with sha512</string>
+    <string name="check_hash_desc">Hash string \"sample\" with sha512</string>
     <string name="keys">Keys</string>
     <string name="debug">Debug</string>
     <string name="copy_private">Copy private key</string>
