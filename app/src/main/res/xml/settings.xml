@@ -3,25 +3,28 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <android.support.v7.preference.PreferenceCategory
-        android:title="Category 1">
-
-        <android.support.v7.preference.SwitchPreferenceCompat
-            android:key="key1"
-            android:title="Switch Preference"
-            android:summary="Switch Summary"
-            android:defaultValue="true" />
-
-        <android.support.v7.preference.EditTextPreference
-            android:key="key2"
-            android:title="EditText Preference"
-            android:summary="EditText Summary"
-            android:dialogMessage="Dialog Message"
-            android:defaultValue="Default value" />
-        <android.support.v7.preference.CheckBoxPreference
-            android:key="key3"
-            android:title="CheckBox Preference"
-            android:summary="CheckBox Summary"
-            android:defaultValue="true"/>
+        android:title="@string/keys">
+        <PreferenceScreen
+            android:key="manage_keys"
+            android:summary="@string/manage_keys_desc"
+            android:title="@string/manage_keys">
+            <Preference android:title="@string/copy_public"
+                android:key="copy_public">
+            </Preference>
+            <Preference android:title="@string/copy_private"
+                android:key="copy_private">
+            </Preference>
+            <Preference android:title="@string/set_keys"
+                android:key="set_keys"
+                android:summary="@string/coming_soon">
+            </Preference>
+        </PreferenceScreen>
     </android.support.v7.preference.PreferenceCategory>
 
+    <android.support.v7.preference.PreferenceCategory
+        android:title="@string/debug">
+        <Preference android:title="@string/check_hash"
+            android:key="check_hash"
+            android:summary="@string/check_hash_desc"/>
+    </android.support.v7.preference.PreferenceCategory>
 </android.support.v7.preference.PreferenceScreen>
