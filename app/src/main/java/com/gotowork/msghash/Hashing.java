@@ -29,6 +29,7 @@ public class Hashing {
         catch (Exception e) {
             Toast.makeText(MainActivity.context, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
         }
+        //Todo: add something like .hexdigest()
         return sha512;
     }
 }
