@@ -3,6 +3,8 @@ package com.gotowork.msghash;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -35,7 +37,13 @@ public class Sawtooth {
         return byteArrayOutputStream.toByteArray();
     }
 
-    public static void sendTransaction(String hash) {
+    public static String getAddress(String string) {
+        String prefix = Hashing.getHash("msghash");
+        String address = Hashing.getHash(string);
+        return prefix + address;
+    }
+
+    public static void sendTransaction(String publicKey) {
 
     }
 }
