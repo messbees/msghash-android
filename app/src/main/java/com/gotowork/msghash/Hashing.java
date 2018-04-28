@@ -24,12 +24,17 @@ public class Hashing {
                 stringBuilder.append(Integer.toString((digest[i] & 0xff) + 0x100, 16).substring(1));
             }
             sha512 = stringBuilder.toString();
-            Toast.makeText(MainActivity.context, sha512, Toast.LENGTH_LONG).show();
+            //Toast.makeText(MainActivity.context, sha512, Toast.LENGTH_LONG).show();
         }
         catch (Exception e) {
             Toast.makeText(MainActivity.context, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
         }
         //Todo: add something like .hexdigest()
         return sha512;
+    }
+
+    public static int toHex (String string)
+    {
+        return Integer.decode(string);
     }
 }
