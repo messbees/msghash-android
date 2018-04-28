@@ -11,6 +11,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.widget.Toast;
 
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -24,8 +25,7 @@ public class SettingsFragment extends PreferenceFragment {
         addPreferencesFromResource(R.xml.settings);
 
 
-        Preference copyPublic = findPreference("copy_public");
-        copyPublic.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        findPreference("copy_public").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 SharedPreferences sharedPreferences = MainActivity.context.getPreferences(MODE_PRIVATE);
@@ -35,8 +35,7 @@ public class SettingsFragment extends PreferenceFragment {
             }
         });
 
-        Preference copyPrivate = findPreference("copy_private");
-        copyPrivate.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        findPreference("copy_private").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 SharedPreferences sharedPreferences = MainActivity.context.getPreferences(MODE_PRIVATE);
@@ -46,8 +45,7 @@ public class SettingsFragment extends PreferenceFragment {
             }
         });
 
-        Preference checkHash = findPreference("check_hash");
-        checkHash.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        findPreference("check_hash").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -71,13 +69,43 @@ public class SettingsFragment extends PreferenceFragment {
             }
         });
 
-        Preference copyPayload = findPreference("copy_payload");
-        copyPayload.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        findPreference("copy_encoded_payload").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 byte[] bytes = Sawtooth.encodePayload("verb", "message");
                 String string = new String(bytes, StandardCharsets.UTF_8);
                 copy(string);
+                return false;
+            }
+        });
+
+        findPreference("copy_hashed_payload").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                byte[] bytes = Sawtooth.encodePayload("verb", "message");
+                String string = new String(bytes, StandardCharsets.UTF_8);
+                String hash = Hashing.getHash(string);
+                copy(hash);
+                return false;
+            }
+        });
+
+        findPreference("copy_hexed_payload").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                byte[] bytes = Sawtooth.encodePayload("verb", "message");
+                String string = new String(bytes, StandardCharsets.UTF_8);
+                String hash = Hashing.getHash(string);
+                String hex = String.format("%040x", new BigInteger(1, hash.getBytes(StandardCharsets.UTF_8)));
+                copy(hex);
+                return false;
+            }
+        });
+
+        findPreference("copy_address").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                copy(Sawtooth.getAddress("hello"));
                 return false;
             }
         });

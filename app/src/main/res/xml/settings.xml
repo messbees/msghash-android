@@ -23,9 +23,14 @@
         <Preference android:title="@string/check_hash"
             android:key="check_hash"
             android:summary="@string/check_hash_desc"/>
-        <Preference android:title="Copy encoded payload with verb:verb and message:message"
-            android:key="copy_payload"
-            android:summary="@string/check_hash_desc"/>
+        <Preference android:title="Copy encoded sample payload"
+            android:key="copy_encoded_payload"/>
+        <Preference android:title="Copy hashed sample payload"
+            android:key="copy_hashed_payload"/>
+        <Preference android:title="Copy hexed sample payload with"
+            android:key="copy_hexed_payload"/>
+        <Preference android:title="Copy generated address"
+            android:key="copy_address"/>
 
     </PreferenceCategory>
 </PreferenceScreen>
