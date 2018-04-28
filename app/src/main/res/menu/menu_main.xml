@@ -9,16 +9,4 @@
         android:title="Settings"
         app:showAsAction="never"/>
 
-    <item
-        android:id="@+id/action_show_keys"
-        android:orderInCategory="100"
-        android:title="Show keys"
-        app:showAsAction="never"/>
-
-    <item
-        android:id="@+id/action_check_hashing_library"
-        android:orderInCategory="100"
-        android:title="Check hashing library"
-        app:showAsAction="never"/>
-
 </menu>

@@ -1,6 +1,7 @@
 package com.gotowork.msghash;
 
 import android.content.Intent;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     MessageAdapter messageAdapter;
 
     public static MainActivity context;
+    private SharedPreferences sharedPreferences;
 
     private String keyPublic, keyPrivate;
 
@@ -34,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this;
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
         Security.insertProviderAt(new org.spongycastle.jce.provider.BouncyCastleProvider(), 1);
         KeyPair keyPair;
         loadKeys();
@@ -77,22 +81,18 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(context, SettingsActivity.class);
                 startActivity(intent);
                 return true;
-            case R.id.action_show_keys:
-                Toast.makeText(context, "private: " + keyPrivate + "\n" + "public: " + keyPublic, Toast.LENGTH_LONG).show();
-                return true;
-            case R.id.action_check_hashing_library:
-                Toast.makeText(context, Hashing.getHash("sample"), Toast.LENGTH_LONG).show();
-                return true;
+            
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
     private void saveKeys() {
-        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        sharedPreferences = getPreferences(MODE_PRIVATE);
         Editor editor = sharedPreferences.edit();
         editor.putString("private", keyPrivate);
         editor.putString("public", keyPublic);
+        editor.apply();
     }
 
     private void loadKeys() {
