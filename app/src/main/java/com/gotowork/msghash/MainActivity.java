@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.Security;
 import java.util.List;
@@ -30,21 +32,23 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
 
     private String keyPublic, keyPrivate;
+    private byte[] keyPublicHex, keyPrivateHex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        context = this;
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-        Security.insertProviderAt(new org.spongycastle.jce.provider.BouncyCastleProvider(), 1);
-        KeyPair keyPair;
-        loadKeys();
-
-        messages = Message.listAll(Message.class);
-        messageAdapter = new MessageAdapter(this, messages);
         try {
+            setContentView(R.layout.activity_main);
+            context = this;
+            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+            Security.insertProviderAt(new org.spongycastle.jce.provider.BouncyCastleProvider(), 1);
+            KeyPair keyPair;
+            loadKeys();
+
+            messages = Message.listAll(Message.class);
+            messageAdapter = new MessageAdapter(this, messages);
+
             initializeComponents();
         }
         catch (Exception e) {
@@ -96,18 +100,29 @@ public class MainActivity extends AppCompatActivity {
         Editor editor = sharedPreferences.edit();
         editor.putString("private", keyPrivate);
         editor.putString("public", keyPublic);
+        String keyPrivateHexString = new String(keyPrivateHex, StandardCharsets.UTF_8);
+        editor.putString("private_hex", keyPrivateHexString);
+        String keyPublicHexString = new String(keyPublicHex, StandardCharsets.UTF_8);
+        editor.putString("public_hex", keyPublicHexString);
+
         editor.apply();
     }
 
     private void loadKeys() {
         SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
         keyPrivate = sharedPreferences.getString("private", "");
+        String keyPrivateHexString = sharedPreferences.getString("private_hex", "");
+        keyPrivateHex = keyPrivateHexString.getBytes(StandardCharsets.UTF_8);
         keyPublic = sharedPreferences.getString("public", "");
-        if (keyPublic == "" || keyPrivate == "") {
+        String keyPublicHexString = sharedPreferences.getString("public_hex", "");
+        keyPublicHex = keyPublicHexString.getBytes(StandardCharsets.UTF_8);
+        if (keyPublic.equals("") || keyPrivate.equals("") || keyPrivateHexString.equals("") || keyPublicHexString.equals("")) {
             try {
                 KeyPair keyPair = Sawtooth.getKeyPair();
                 keyPrivate = keyPair.getPrivate().toString();
+                keyPrivateHex = keyPair.getPrivate().getEncoded();
                 keyPublic = keyPair.getPublic().toString();
+                keyPublicHex = keyPair.getPublic().getEncoded();
                 saveKeys();
             }
             catch (Exception e) {
