@@ -15,6 +15,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders = [HOCKEYAPP_APP_ID: "60e9788b4f3d455197689ba0061529e8"] //HOCKEYAPP
     }
     buildTypes {
         release {
@@ -52,6 +53,7 @@ dependencies {
     })
     compile 'com.google.protobuf:protobuf-lite:3.0.0'
     //implementation 'com.google.protobuf:protobuf-lite:3.0.0'
+    compile 'net.hockeyapp.android:HockeySDK:5.1.0' //hockeyapp
     compile 'com.android.support:preference-v7:23.4.0' //TODO: fix this
     compile 'co.nstant.in:cbor:0.8' //Cbor library
     compile 'com.madgag.spongycastle:core:1.54.0.0' //SpongyCastle library for encrytpion
