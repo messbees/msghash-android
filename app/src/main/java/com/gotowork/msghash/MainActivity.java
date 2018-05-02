@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.Security;
@@ -27,7 +26,6 @@ public class MainActivity extends AppCompatActivity {
     List<Message> messages;
     ListView listView;
     MessageAdapter messageAdapter;
-
     public static MainActivity context;
     private SharedPreferences sharedPreferences;
 
