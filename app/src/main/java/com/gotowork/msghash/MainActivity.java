@@ -19,6 +19,8 @@ import java.util.List;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
+import static sawtooth.sdk.protobuf.TransactionHeader;
+
 public class MainActivity extends AppCompatActivity {
 
     public EditText editText, editName;
@@ -50,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
             messageAdapter = new MessageAdapter(this, messages);
 
             initializeComponents();
+
         }
         catch (Exception e) {
             Toast.makeText(context, e.toString()+" "+e.getLocalizedMessage(), Toast.LENGTH_LONG).show();

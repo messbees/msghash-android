@@ -1,11 +1,11 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.protobuf'
 
-sourceSets {
-    main.java.srcDirs += "${protobuf.generatedFilesBaseDir}/main/javalite"
-}
 
 android {
+    sourceSets {
+        main.java.srcDirs += "${protobuf.generatedFilesBaseDir}/main/javalite"
+    }
     compileSdkVersion 26
     buildToolsVersion "26.0.0"
     defaultConfig {
