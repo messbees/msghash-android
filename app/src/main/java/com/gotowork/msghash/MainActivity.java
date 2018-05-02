@@ -19,8 +19,6 @@ import java.util.List;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
-import static sawtooth.sdk.protobuf.TransactionHeader;
-
 public class MainActivity extends AppCompatActivity {
 
     public EditText editText, editName;
