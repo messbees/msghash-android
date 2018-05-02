@@ -15,6 +15,8 @@ import java.security.spec.ECGenParameterSpec;
 import java.util.HashMap;
 import java.util.Map;
 
+import sawtooth.sdk.protobuf.TransactionHeader;
+
 import co.nstant.in.cbor.CborBuilder;
 import co.nstant.in.cbor.CborEncoder;
 
@@ -29,7 +31,7 @@ public class Sawtooth {
     public static byte[] encodePayload(String verb, String hash) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
-            new CborEncoder(byteArrayOutputStream).encode(new CborBuilder().addMap().put("Verb", verb).put("Message", hash).end().build());
+            new CborEncoder(byteArrayOutputStream).encode(new CborBuilder().addMap().put("Verb", verb).put("Message", hash).end().build()); //TODO: check/fix wrong sha512 hash for encoded payload
         }
         catch (Exception e) {
             Toast.makeText(MainActivity.context, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
@@ -43,8 +45,13 @@ public class Sawtooth {
         return prefix + address;
     }
 
+    public static void applyTransaction(int batcherPublicKey, String inputs, String outputs, int payload) {
+        TransactionHeader transactionHeader = TransactionHeader.newBuilder().addInputs(inputs).addOutputs(outputs).build();
+
+    }
+
     public static void sendTransaction(String publicKey) {
 
     }
 }
-//TODO correct keys string
+//TODO: correct keys string
