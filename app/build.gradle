@@ -12,8 +12,8 @@ android {
         applicationId "com.gotowork.msghash"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 16
-        versionName "0.0.2-debug"
+        versionCode 18
+        versionName "0.0.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [HOCKEYAPP_APP_ID: "60e9788b4f3d455197689ba0061529e8"]
     }
