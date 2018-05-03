@@ -1,3 +1,29 @@
 <resources>
     <string name="app_name">MsgHash</string>
+    <string name="family_name">msghash</string>
+    <string name="family_version">1.0</string>
+
+    <string name="text">Text</string>
+    <string name="name">Name</string>
+    <string name="send">Send</string>
+    <string name="hash">Hash</string>
+
+    <string name="ok">OK</string>
+    <string name="copy">Copy</string>
+
+    <string name="settings">Settings</string>
+    <string name="manage_keys">Manage keys</string>
+    <string name="manage_keys_desc">Actions with public and private keys</string>
+    <string name="check_hash">Check hashing library</string>
+    <string name="check_hash_desc">Hash string \"sample\" with sha512</string>
+    <string name="keys">Keys</string>
+    <string name="debug">Debug</string>
+    <string name="copy_private">Copy private key</string>
+    <string name="copy_private_hex">Copy private key hex</string>
+    <string name="copy_public">Copy public key</string>
+    <string name="copy_public_hex">Copy public key hex</string>
+    <string name="set_keys">Set keys</string>
+    <string name="coming_soon">Coming soon!</string>
+
+    <string name="copied">Copied to clipboard</string>
 </resources>

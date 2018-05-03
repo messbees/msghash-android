@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
+        android:layout_marginBottom="5dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -24,7 +25,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:hint="Name"
+                android:hint="@string/name"
                 android:inputType="textPersonName" />
 
             <Button
@@ -32,7 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Send" />
+                android:text="@string/send" />
         </LinearLayout>
 
         <EditText
@@ -40,7 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Text"
+            android:hint="@string/text"
             android:inputType="text" />
 
     </LinearLayout>
@@ -48,6 +49,8 @@
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_margin="5dp"
+        android:layout_marginTop="5dp" />
 
 </LinearLayout>

@@ -45,18 +45,32 @@ public class MessageAdapter extends BaseAdapter {
 
         final Message message = getMessage(position);
 
+        final Button buttonDelete = (Button) view.findViewById(R.id.buttonDelete);
+        final Button buttonPin = (Button) view.findViewById(R.id.buttonPin);
         ((TextView) view.findViewById(R.id.messageName)).setText(message.getName());
         ((TextView) view.findViewById(R.id.messageText)).setText(message.getText());
-        ((TextView) view.findViewById(R.id.messageTime)).setText(message.getTime());
-        /*final Button buttonDelete = (Button) view.findViewById(R.id.buttonDelete);
+        if (message.checkOld())
+            ((TextView) view.findViewById(R.id.messageTime)).setText(message.getFullTime());
+        else
+            ((TextView) view.findViewById(R.id.messageTime)).setText(message.getTime());
+
+        if (message.checkPinned()) {
+            buttonDelete.setEnabled(false);
+            buttonPin.setEnabled(false);
+            update();
+        }
+
         buttonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                message.delete();
-                update();
+                if (!message.checkPinned()) {
+                    objects.remove(message);
+                    update();
+                    message.delete();
+                }
             }
         });
-        final Button buttonPin = (Button) view.findViewById(R.id.buttonPin);
+
         buttonPin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -65,7 +79,7 @@ public class MessageAdapter extends BaseAdapter {
                 buttonPin.setEnabled(false);
                 update();
             }
-        });*/
+        });
 
         return view;
     }
