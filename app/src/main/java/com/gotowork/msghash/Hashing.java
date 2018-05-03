@@ -35,6 +35,13 @@ public class Hashing {
         return sha512;
     }
 
+    public static String getHash(byte[] byteArray)throws NoSuchAlgorithmException {
+        MessageDigest sha256 = MessageDigest.getInstance("SHA-512");
+        sha256.update(byteArray);
+        byte[] digestResult = sha256.digest();
+        return String.format( "%064x", new BigInteger(1, digestResult));
+    }
+
     public static int getHexHash (String string) {
         int hexInt = 0;
         String hash = getHash(string);

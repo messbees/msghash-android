@@ -12,12 +12,15 @@ import android.preference.PreferenceFragment;
 import android.widget.Toast;
 
 import java.math.BigInteger;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
 
 import static android.content.Context.MODE_PRIVATE;
 
 
 public class SettingsFragment extends PreferenceFragment {
+    private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,8 +86,13 @@ public class SettingsFragment extends PreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 byte[] bytes = Sawtooth.encodePayload("verb", "message");
-                String string = new String(bytes, StandardCharsets.UTF_8);
-                String hash = Hashing.getHash(string);
+                String hash = "";
+                try {
+                    hash = Hashing.getHash(bytes);
+                }
+                catch (NoSuchAlgorithmException e) {
+                    Toast.makeText(getActivity(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                }
                 copy(hash);
                 return false;
             }
@@ -116,5 +124,15 @@ public class SettingsFragment extends PreferenceFragment {
         ClipData clip = ClipData.newPlainText("simple text", string);
         clipboard.setPrimaryClip(clip);
         Toast.makeText(getActivity(), R.string.copied, Toast.LENGTH_LONG).show();
+    }
+
+    public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for ( int j = 0; j < bytes.length; j++ ) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
     }
 }
