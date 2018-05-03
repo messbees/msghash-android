@@ -48,6 +48,26 @@ public class SettingsFragment extends PreferenceFragment {
             }
         });
 
+        findPreference("copy_public_hex").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                SharedPreferences sharedPreferences = MainActivity.context.getPreferences(MODE_PRIVATE);
+                String text = sharedPreferences.getString("public_hex", "");
+                copy(text);
+                return false;
+            }
+        });
+
+        findPreference("copy_private_hex").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                SharedPreferences sharedPreferences = MainActivity.context.getPreferences(MODE_PRIVATE);
+                String text = sharedPreferences.getString("private_hex", "");
+                copy(text);
+                return false;
+            }
+        });
+
         findPreference("check_hash").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -124,15 +144,5 @@ public class SettingsFragment extends PreferenceFragment {
         ClipData clip = ClipData.newPlainText("simple text", string);
         clipboard.setPrimaryClip(clip);
         Toast.makeText(getActivity(), R.string.copied, Toast.LENGTH_LONG).show();
-    }
-
-    public static String bytesToHex(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        for ( int j = 0; j < bytes.length; j++ ) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-        }
-        return new String(hexChars);
     }
 }
