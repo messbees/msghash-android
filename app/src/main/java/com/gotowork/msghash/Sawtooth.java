@@ -49,7 +49,7 @@ public class Sawtooth {
         return prefix + address;
     }
 
-    private static TransactionHeader applyTransaction(String verb, String message) {
+    private static TransactionHeader getTransactionHeader(String verb, String message) {
         TransactionHeader.Builder builder = TransactionHeader.newBuilder();
         String key = MainActivity.getPublicHex();
         builder.setBatcherPublicKey(key); //TODO: add batcher public key
