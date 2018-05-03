@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">MsgHash</string>
+    <string name="family_name">msghash</string>
+    <string name="family_version">1.0</string>
+
     <string name="text">Text</string>
     <string name="name">Name</string>
     <string name="send">Send</string>
@@ -16,7 +19,9 @@
     <string name="keys">Keys</string>
     <string name="debug">Debug</string>
     <string name="copy_private">Copy private key</string>
+    <string name="copy_private_hex">Copy private key hex</string>
     <string name="copy_public">Copy public key</string>
+    <string name="copy_public_hex">Copy public key hex</string>
     <string name="set_keys">Set keys</string>
     <string name="coming_soon">Coming soon!</string>
 
