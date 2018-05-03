@@ -32,7 +32,7 @@ public class Sawtooth {
         return keyPairGenerator.generateKeyPair();
     }
 
-    private static byte[] encodePayload(String verb, String hash) {
+    public static byte[] encodePayload(String verb, String hash) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
             new CborEncoder(byteArrayOutputStream).encode(new CborBuilder().addMap().put("Verb", verb).put("Message", hash).end().build());
@@ -43,13 +43,13 @@ public class Sawtooth {
         return byteArrayOutputStream.toByteArray();
     }
 
-    private static String getAddress(String string) {
+    public static String getAddress(String string) {
         String prefix = Hashing.getHash("msghash");
         String address = Hashing.getHash(string);
         return prefix + address;
     }
 
-    private static TransactionHeader getTransactionHeader(String verb, String message) {
+    public static TransactionHeader getTransactionHeader(String verb, String message) {
         TransactionHeader.Builder builder = TransactionHeader.newBuilder();
         String key = MainActivity.getPublicHex();
         builder.setBatcherPublicKey(key); //TODO: add batcher public key
@@ -72,7 +72,7 @@ public class Sawtooth {
         return builder.build();
     }
 
-    private static void sendTransaction(String publicKey) {
+    public static void sendTransaction(String publicKey) {
 
     }
 
