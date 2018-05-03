@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         //SugarContext.init(this);
         context = this;
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        //TODO: fix crash on fresh devices
+
         Security.insertProviderAt(new org.spongycastle.jce.provider.BouncyCastleProvider(), 1);
         KeyPair keyPair;
         loadKeys();
@@ -53,15 +53,15 @@ public class MainActivity extends AppCompatActivity {
     }
     private void loadMessages() {
         SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        messages = Message.listAll(Message.class);
         if (sharedPreferences.getBoolean("first_launch", true)) {
-            Message message = new Message("messbees", "Добро пожаловать в эту шнягу!");
+            Message message = new Message("messbees", "Welcome!");
             messages.add(message);
             message.save();
             Editor editor = sharedPreferences.edit();
             editor.putBoolean("first_launch", false);
             editor.apply();
         }
-        messages = Message.listAll(Message.class);
 
         messageAdapter = new MessageAdapter(this, messages);
         messageAdapter.update();
