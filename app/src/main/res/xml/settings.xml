@@ -8,10 +8,20 @@
         <Preference android:title="@string/copy_public"
             android:key="copy_public">
         </Preference>
-        <Preference android:title="@string/copy_private"
+        <Preference
+            android:title="@string/copy_private"
             android:key="copy_private">
         </Preference>
-        <Preference android:title="@string/set_keys"
+        <Preference
+            android:title="@string/copy_public_hex"
+            android:key="copy_private_hex">
+        </Preference>
+        <Preference
+            android:title="@string/copy_private_hex"
+            android:key="copy_public_hex">
+        </Preference>
+        <Preference
+            android:title="@string/set_keys"
             android:key="set_keys"
             android:summary="@string/coming_soon">
         </Preference>
@@ -27,7 +37,7 @@
             android:key="copy_encoded_payload"/>
         <Preference android:title="Copy hashed sample payload"
             android:key="copy_hashed_payload"/>
-        <Preference android:title="Copy hexed sample payload with"
+        <Preference android:title="Copy hexed sample payload"
             android:key="copy_hexed_payload"/>
         <Preference android:title="Copy generated address"
             android:key="copy_address"/>
