@@ -12,11 +12,15 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.Security;
 import java.util.List;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import net.hockeyapp.android.CrashManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,32 +34,39 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
 
     private String keyPublic, keyPrivate;
-    private byte[] keyPublicHex, keyPrivateHex;
+    private static byte[] keyPublicHex, keyPrivateHex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //TODO: fix crash on new phones
-        try {
-            setContentView(R.layout.activity_main);
-            context = this;
-            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        setContentView(R.layout.activity_main);
+        //SugarContext.init(this);
+        context = this;
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        //TODO: fix crash on fresh devices
+        Security.insertProviderAt(new org.spongycastle.jce.provider.BouncyCastleProvider(), 1);
+        KeyPair keyPair;
+        loadKeys();
 
-            Security.insertProviderAt(new org.spongycastle.jce.provider.BouncyCastleProvider(), 1);
-            KeyPair keyPair;
-            loadKeys();
-
-            messages = Message.listAll(Message.class);
-            messageAdapter = new MessageAdapter(this, messages);
-
-            initializeComponents();
-
-        }
-        catch (Exception e) {
-            Toast.makeText(context, e.toString()+" "+e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-        }
+        loadMessages();
+        initializeComponents();
     }
+    private void loadMessages() {
+        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        if (sharedPreferences.getBoolean("first_launch", true)) {
+            Message message = new Message("messbees", "Добро пожаловать в эту шнягу!");
+            messages.add(message);
+            message.save();
+            Editor editor = sharedPreferences.edit();
+            editor.putBoolean("first_launch", false);
+            editor.apply();
+        }
+        messages = Message.listAll(Message.class);
 
+        messageAdapter = new MessageAdapter(this, messages);
+        messageAdapter.update();
+
+    }
     private void initializeComponents() {
         editText = (EditText) findViewById(R.id.editText);
         editName = (EditText) findViewById(R.id.editName);
@@ -81,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -107,16 +117,11 @@ public class MainActivity extends AppCompatActivity {
 
         editor.apply();
     }
-
     private void loadKeys() {
         SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
         keyPrivate = sharedPreferences.getString("private", "");
-        String keyPrivateHexString = sharedPreferences.getString("private_hex", "");
-        keyPrivateHex = keyPrivateHexString.getBytes(StandardCharsets.UTF_8);
         keyPublic = sharedPreferences.getString("public", "");
-        String keyPublicHexString = sharedPreferences.getString("public_hex", "");
-        keyPublicHex = keyPublicHexString.getBytes(StandardCharsets.UTF_8);
-        if (keyPublic.equals("") || keyPrivate.equals("") || keyPrivateHexString.equals("") || keyPublicHexString.equals("")) {
+        if (keyPublic.equals("") || keyPrivate.equals("")) {
             try {
                 KeyPair keyPair = Sawtooth.getKeyPair();
                 keyPrivate = keyPair.getPrivate().toString();
@@ -125,9 +130,33 @@ public class MainActivity extends AppCompatActivity {
                 keyPublicHex = keyPair.getPublic().getEncoded();
                 saveKeys();
             }
-            catch (Exception e) {
-                Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            catch (NoSuchAlgorithmException e) {
+                makeToast(e.getMessage());
+            }
+            catch (NoSuchProviderException e) {
+                makeToast(e.getMessage());
+            }
+            catch (InvalidAlgorithmParameterException e) {
+                makeToast(e.getMessage());
             }
         }
+    }
+
+    private void makeToast(String message) {
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+    }
+
+    public static String getPublicHex() {
+        String keyPrivateHexString = new String(keyPrivateHex, StandardCharsets.UTF_8);
+        return keyPrivateHexString;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        checkForCrashes();
+    }
+    private void checkForCrashes() {
+        CrashManager.register(this);
     }
 }
