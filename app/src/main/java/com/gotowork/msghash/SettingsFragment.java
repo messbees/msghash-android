@@ -114,6 +114,7 @@ public class SettingsFragment extends PreferenceFragment {
                         String fullTime = ((EditText) view.findViewById(R.id.customMsgDate)).getText().toString();
                         Message message = new Message(name, text, time, fullTime);
                         message.save();
+                        Toast.makeText(getActivity(), R.string.custom_message_notification, Toast.LENGTH_LONG).show();
                     }
                 });
                 builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
