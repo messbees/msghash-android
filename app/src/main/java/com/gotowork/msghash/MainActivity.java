@@ -146,11 +146,6 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
     }
 
-    public static String getPublicHex() {
-        String keyPrivateHexString = new String(keyPrivateHex, StandardCharsets.UTF_8);
-        return keyPrivateHexString;
-    }
-
     @Override
     public void onResume() {
         super.onResume();
