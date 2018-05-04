@@ -56,19 +56,31 @@ public class MessageAdapter extends BaseAdapter {
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-                builder.setTitle(ctx.getString(R.string.hash));
-                builder.setMessage(message.getHash());
+                builder.setTitle(ctx.getString(R.string.message));
+                final String address = Sawtooth.getAddress(message.getHash());
+                String dialogMessage = ctx.getString(R.string.hash) + ": \n" + message.getHash() + "\n\n" + ctx.getString(R.string.address) + ": \n" + address;
+                dialogMessage += "\n\n" + message.getText()+message.getName()+message.getFullTime(); //TODO: remove this
+                builder.setMessage(dialogMessage);
                 builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
                     }
                 });
-                builder.setNeutralButton(R.string.copy, new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(R.string.copy_hash, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         ClipboardManager clipboard = (ClipboardManager)ctx.getSystemService(Context.CLIPBOARD_SERVICE);
                         ClipData clip = ClipData.newPlainText("simple text", message.getHash());
+                        clipboard.setPrimaryClip(clip);
+                        Toast.makeText(ctx, R.string.copied, Toast.LENGTH_LONG).show();
+                    }
+                });
+                builder.setNeutralButton(R.string.copy_address, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        ClipboardManager clipboard = (ClipboardManager)ctx.getSystemService(Context.CLIPBOARD_SERVICE);
+                        ClipData clip = ClipData.newPlainText("simple text", address);
                         clipboard.setPrimaryClip(clip);
                         Toast.makeText(ctx, R.string.copied, Toast.LENGTH_LONG).show();
                     }
