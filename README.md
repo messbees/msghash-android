@@ -1,4 +1,4 @@
-# MsgHash v0.0.3
+# MsgHash v0.0.3-debug
 -------------
 
 ## Download:
