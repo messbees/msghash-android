@@ -2,6 +2,8 @@ package com.gotowork.msghash;
 
 import com.orm.SugarRecord;
 
+import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -23,6 +25,14 @@ public class Message extends SugarRecord<Message> {
         this.text = text;
         this.isPinned = false;
         setTime();
+        setHash();
+    }
+    public Message (String name, String text, String time, String fullTime) {
+        this.name = name;
+        this.text = text;
+        this.isPinned = false;
+        this.fullTime = fullTime;
+        this.time = time;
         setHash();
     }
 
@@ -83,9 +93,14 @@ public class Message extends SugarRecord<Message> {
         String temp = "";
         temp += text;
         temp += name;
-        temp += time;
-        temp = Hashing.getHash(temp);
-        this.hash = temp;
+        temp += fullTime;
+        try {
+            temp = Hashing.getHash(temp.getBytes(StandardCharsets.UTF_8));
+        }
+        catch (NoSuchAlgorithmException e) {
+            //sad =(
+        }
+        this.hash = temp.substring(64);
     }
 
     public String getName() {
