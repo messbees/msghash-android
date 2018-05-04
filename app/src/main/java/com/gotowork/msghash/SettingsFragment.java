@@ -167,7 +167,7 @@ public class SettingsFragment extends PreferenceFragment {
         findPreference("copy_address").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                copy(Sawtooth.getAddress("hello"));
+                copy(Sawtooth.getAddress("testTexttestName04/05/2018 16:48"));
                 return false;
             }
         });
