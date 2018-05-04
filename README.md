@@ -1,9 +1,9 @@
-# MsgHash v0.0.3
+# MsgHash v0.0.3-debug
 -------------
 
 ## Download:
 -------------
-https://rink.hockeyapp.net/apps/60e9788b4f3d455197689ba0061529e8/app_versions/21
+https://rink.hockeyapp.net/manage/apps/758981/app_versions/27/builds/26095591
 
 ## About
 -------------
