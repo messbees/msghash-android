@@ -1,13 +1,20 @@
 package com.gotowork.msghash;
 
 import java.util.List;
+
+import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MessageAdapter extends BaseAdapter {
     Context ctx;
@@ -44,7 +51,32 @@ public class MessageAdapter extends BaseAdapter {
         }
 
         final Message message = getMessage(position);
+        final LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.messageView);
+        linearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+                builder.setTitle(ctx.getString(R.string.hash));
+                builder.setMessage(message.getHash());
+                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
 
+                    }
+                });
+                builder.setNeutralButton(R.string.copy, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        ClipboardManager clipboard = (ClipboardManager)ctx.getSystemService(Context.CLIPBOARD_SERVICE);
+                        ClipData clip = ClipData.newPlainText("simple text", message.getHash());
+                        clipboard.setPrimaryClip(clip);
+                        Toast.makeText(ctx, R.string.copied, Toast.LENGTH_LONG).show();
+                    }
+                });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }
+        });
         final Button buttonDelete = (Button) view.findViewById(R.id.buttonDelete);
         final Button buttonPin = (Button) view.findViewById(R.id.buttonPin);
         ((TextView) view.findViewById(R.id.messageName)).setText(message.getName());
