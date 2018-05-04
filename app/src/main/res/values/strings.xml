@@ -9,9 +9,13 @@
     <string name="short_time">Short time</string>
     <string name="send">Send</string>
     <string name="hash">Hash</string>
+    <string name="address">Address</string>
+    <string name="message">Message</string>
 
     <string name="ok">OK</string>
     <string name="copy">Copy</string>
+    <string name="copy_hash">Copy hash</string>
+    <string name="copy_address">Copy address</string>
     <string name="cancel">Cancel</string>
 
     <string name="settings">Settings</string>
