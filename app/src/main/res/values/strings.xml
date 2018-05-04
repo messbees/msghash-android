@@ -18,9 +18,9 @@
     <string name="manage_keys">Manage keys</string>
     <string name="manage_keys_desc">Actions with public and private keys</string>
     <string name="check_hash">Check hashing library</string>
+    <string name="check_hash_desc">Hash string \"sample\" with sha512</string>
     <string name="custom_message">Add custom message</string>
     <string name="custom_message_sum">Add message with custom time</string>
-    <string name="check_hash_desc">Hash string \"sample\" with sha512</string>
     <string name="keys">Keys</string>
     <string name="debug">Debug</string>
     <string name="copy_private">Copy private key</string>
@@ -30,5 +30,6 @@
     <string name="set_keys">Set keys</string>
     <string name="coming_soon">Coming soon!</string>
 
+    <string name="custom_message_notification">Message will appear after restart of the app</string>
     <string name="copied">Copied to clipboard</string>
 </resources>
