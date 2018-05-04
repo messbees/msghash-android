@@ -30,6 +30,9 @@
     <PreferenceCategory
         android:title="@string/debug"
         android:key="deb_cat">
+        <Preference android:title="@string/custom_message"
+            android:key="custom_message"
+            android:summary="@string/custom_message_sum"/>
         <Preference android:title="@string/check_hash"
             android:key="check_hash"
             android:summary="@string/check_hash_desc"/>
@@ -37,8 +40,8 @@
             android:key="copy_encoded_payload"/>
         <Preference android:title="Copy hashed sample payload"
             android:key="copy_hashed_payload"/>
-        <Preference android:title="Copy hexed sample payload"
-            android:key="copy_hexed_payload"/>
+        <Preference android:title="Copy serialized TransactionHeader"
+            android:key="copy_serialized_header"/>
         <Preference android:title="Copy generated address"
             android:key="copy_address"/>
 

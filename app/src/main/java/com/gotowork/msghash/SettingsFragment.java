@@ -9,12 +9,17 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
+
+import sawtooth.sdk.protobuf.TransactionHeader;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -92,6 +97,37 @@ public class SettingsFragment extends PreferenceFragment {
             }
         });
 
+        findPreference("custom_message").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle(getString(R.string.custom_message));
+                final View view = (LinearLayout) getActivity().getLayoutInflater()
+                        .inflate(R.layout.dialog_custom_message, null);
+                builder.setView(view);
+                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String name = ((EditText) view.findViewById(R.id.customMsgName)).getText().toString();
+                        String text = ((EditText) view.findViewById(R.id.customMsgText)).getText().toString();
+                        String time = ((EditText) view.findViewById(R.id.customMsgTime)).getText().toString();
+                        String fullTime = ((EditText) view.findViewById(R.id.customMsgDate)).getText().toString();
+                        Message message = new Message(name, text, time, fullTime);
+                        message.save();
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+                return false;
+            }
+        });
+
         findPreference("copy_encoded_payload").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -118,14 +154,11 @@ public class SettingsFragment extends PreferenceFragment {
             }
         });
 
-        findPreference("copy_hexed_payload").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        findPreference("copy_serialized_header").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                byte[] bytes = Sawtooth.encodePayload("verb", "message");
-                String string = new String(bytes, StandardCharsets.UTF_8);
-                String hash = Hashing.getHash(string);
-                String hex = String.format("%040x", new BigInteger(1, hash.getBytes(StandardCharsets.UTF_8)));
-                copy(hex);
+                TransactionHeader transactionHeader = Sawtooth.getTransactionHeader("verb", "message");
+                copy(transactionHeader.toString());
                 return false;
             }
         });
