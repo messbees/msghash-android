@@ -1,4 +1,4 @@
-# MsgHash v0.0.2
+# MsgHash v0.0.3
 -------------
 
 ## Download:
@@ -16,8 +16,9 @@ This version of the app can:
 
 ## Changelog
 -------------
-- Fix bug that caused crash on start
-- Add more funcs to Sawtooth.java (WIP)
+- Add custom message creation (Settings -> Add custom message)
+- Fix wrong message hash
+- Fix wrong getAddress()
 
 ## Next Versions
 -------------
