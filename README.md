@@ -17,10 +17,12 @@ This version of the app can:
 ## Changelog
 -------------
 - Add custom message creation (Settings -> Add custom message)
+- Add full algorithm to assemble transactions and batches
 - Fix wrong message hash
 - Fix wrong getAddress()
 
 ## Next Versions
 -------------
-v0.0.3: Fully assemble TransactionHeader + sign it with ECDSA spec256k1 key;
+v0.0.3: Assembled serialized transaction
+v0.0.4: POST request to REST API
 v0.1: Pin message's hash to blockchain and check whether it is already pinned, also new design
