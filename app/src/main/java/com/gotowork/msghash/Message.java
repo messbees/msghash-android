@@ -1,9 +1,15 @@
 package com.gotowork.msghash;
 
+import android.widget.Toast;
+
 import com.orm.SugarRecord;
 
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SignatureException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -36,10 +42,26 @@ public class Message extends SugarRecord<Message> {
         setHash();
     }
 
-    public void pin() {
+    public boolean pin(KeyPair keyPair) {
         isPinned = true;
         save();
-        Sawtooth.pin(hash);
+        try {
+            Sawtooth.pin(keyPair, hash);
+            return true;
+        }
+        catch (SignatureException e) {
+            Toast.makeText(MainActivity.context, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+        catch (InvalidKeyException e) {
+            Toast.makeText(MainActivity.context, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+        catch (NoSuchAlgorithmException e) {
+            Toast.makeText(MainActivity.context, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+        catch (NoSuchProviderException e) {
+            Toast.makeText(MainActivity.context, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+        return false;
     }
 
     public boolean checkPinned() {
