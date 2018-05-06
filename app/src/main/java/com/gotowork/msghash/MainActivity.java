@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     public PrivateKey privateKey;
     private String keyPublic, keyPrivate;
     private static byte[] keyPublicHex, keyPrivateHex;
-
+    private KeyPair keyPair;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             editor.apply();
         }
 
-        messageAdapter = new MessageAdapter(this, messages);
+        messageAdapter = new MessageAdapter(this, messages, keyPair);
         messageAdapter.update();
 
     }
@@ -126,7 +126,8 @@ public class MainActivity extends AppCompatActivity {
         keyPublic = sharedPreferences.getString("public", "");
         if (keyPublic.equals("") || keyPrivate.equals("")) {
             try {
-                KeyPair keyPair = Sawtooth.getKeyPair();
+                KeyPair k = Sawtooth.getKeyPair();
+                keyPair= k;
                 keyPrivate = keyPair.getPrivate().toString();
                 keyPrivateHex = keyPair.getPrivate().getEncoded();
                 keyPublic = keyPair.getPublic().toString();

@@ -168,7 +168,7 @@ public class SettingsFragment extends PreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 try {
-                    copy(Sawtooth.pin(Sawtooth.getKeyPair(), "d8c406bb83eaae2c30f75c931d425c6c114db27a66670d5d96ff24075323df84"));
+
                 }
                 catch (Exception e) {
                     copy(getActivity().getString(R.string.error));

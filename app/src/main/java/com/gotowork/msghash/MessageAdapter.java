@@ -1,5 +1,6 @@
 package com.gotowork.msghash;
 
+import java.security.KeyPair;
 import java.util.List;
 
 import android.app.AlertDialog;
@@ -20,9 +21,10 @@ public class MessageAdapter extends BaseAdapter {
     Context ctx;
     LayoutInflater lInflater;
     List<Message> objects;
-
-    MessageAdapter(Context context, List<Message> messages) {
+    KeyPair keyPair;
+    MessageAdapter(Context context, List<Message> messages, KeyPair k) {
         ctx = context;
+        keyPair = k;
         objects = messages;
         lInflater = (LayoutInflater) ctx
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -118,10 +120,11 @@ public class MessageAdapter extends BaseAdapter {
         buttonPin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                message.pin();
-                buttonDelete.setEnabled(false);
-                buttonPin.setEnabled(false);
-                update();
+                if (message.pin(keyPair)) {
+                    buttonDelete.setEnabled(false);
+                    buttonPin.setEnabled(false);
+                    update();
+                }
             }
         });
 
