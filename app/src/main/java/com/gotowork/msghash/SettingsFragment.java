@@ -158,8 +158,21 @@ public class SettingsFragment extends PreferenceFragment {
         findPreference("copy_serialized_header").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                TransactionHeader transactionHeader = Sawtooth.getTransactionHeader("verb", "message");
-                copy(transactionHeader.toString());
+                TransactionHeader transactionHeader = Sawtooth.getTransactionHeader("verb", "e8730de8aa77d74a251c08616479058c104bf9d15bd5cf684d6e5eee45353387");
+                copy(new String(transactionHeader.toByteArray(), StandardCharsets.UTF_8));
+                return false;
+            }
+        });
+
+        findPreference("copy_signed_header").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                try {
+                    copy(Sawtooth.pin(Sawtooth.getKeyPair(), "d8c406bb83eaae2c30f75c931d425c6c114db27a66670d5d96ff24075323df84"));
+                }
+                catch (Exception e) {
+                    copy(getActivity().getString(R.string.error));
+                }
                 return false;
             }
         });

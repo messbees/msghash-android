@@ -134,7 +134,7 @@ public class Sawtooth { //TODO: change all funcs to private (except pin & check)
         return new BigInteger(1, signedBytes).toString(16); //TODO: fix wrong signature
     }
 
-    public static String pin(KeyPair keyPair, String hashedMessage) throws SignatureException, InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException {
+    public static void pin(KeyPair keyPair, String hashedMessage) throws SignatureException, InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException {
         TransactionHeader transactionHeader = getTransactionHeader("pin", hashedMessage);
         String transactionHeaderSignature = sign(keyPair, transactionHeader.toByteArray());
         byte[] payload = encodePayload("pin", hashedMessage);
@@ -144,7 +144,7 @@ public class Sawtooth { //TODO: change all funcs to private (except pin & check)
         Batch batch = getBatch(batchHeader, batchHeaderSignature, transaction);
         BatchList batchList = getBatchList(batch);
         byte[] batchListBytes = batchList.toByteArray();
-        return headerSignature;
+        //return headerSignature;
     }
 
     public static void check(String hashedMessage) {

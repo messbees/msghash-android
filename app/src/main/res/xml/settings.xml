@@ -42,6 +42,8 @@
             android:key="copy_hashed_payload"/>
         <Preference android:title="Copy serialized TransactionHeader"
             android:key="copy_serialized_header"/>
+        <Preference android:title="Copy signed TransactionHeader"
+            android:key="copy_signed_header"/>
         <Preference android:title="Copy generated address"
             android:key="copy_address"/>
 
