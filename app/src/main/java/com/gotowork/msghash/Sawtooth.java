@@ -13,6 +13,7 @@ import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -20,6 +21,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
+import java.security.Signature;
+import java.security.SignatureException;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.ECParameterSpec;
 import java.util.Arrays;
@@ -28,12 +31,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-
+import sawtooth.sdk.protobuf.BatchList;
+import sawtooth.sdk.protobuf.BatchHeader;
 import sawtooth.sdk.protobuf.Transaction;
 import sawtooth.sdk.protobuf.TransactionHeader;
-
+import sawtooth.sdk.protobuf.Batch;
 import co.nstant.in.cbor.CborBuilder;
 import co.nstant.in.cbor.CborEncoder;
+import sawtooth.sdk.protobuf.TransactionList;
 
 public class Sawtooth { //TODO: change all funcs to private (except pin & check)
     public static KeyPair getKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
@@ -65,17 +70,17 @@ public class Sawtooth { //TODO: change all funcs to private (except pin & check)
         return prefix + address;
     }
 
-    public static TransactionHeader getTransactionHeader(String verb, String message) {
+    public static TransactionHeader getTransactionHeader(String verb, String hashedMessage) {
         TransactionHeader.Builder builder = TransactionHeader.newBuilder();
         String key = "1cf1266e282c41be5e4254d8820772c5518a2c5a8c0c7f7eda19594a7eb539453e1ed7"; //TODO: add batcher public key
         builder.setBatcherPublicKey(key);
         builder.setFamilyName(MainActivity.context.getString(R.string.family_name));
         builder.setFamilyVersion(MainActivity.context.getString(R.string.family_version));
-        builder.setInputs(0, getAddress(message));
-        builder.setOutputs(0, getAddress(message));
+        builder.addInputs(getAddress(hashedMessage));
+        builder.addOutputs(getAddress(hashedMessage));
         int nonce = new Random(Calendar.getInstance().getTimeInMillis()).nextInt(1000000000);
         builder.setNonce(String.valueOf(nonce));
-        byte[] payload = encodePayload(verb, message);
+        byte[] payload = encodePayload(verb, hashedMessage);
         String hashedPayload = "";
         try {
             hashedPayload = Hashing.getHash(payload);
@@ -87,21 +92,59 @@ public class Sawtooth { //TODO: change all funcs to private (except pin & check)
         builder.setSignerPublicKey(key);
         return builder.build();
     }
+    public static Transaction getTransaction(TransactionHeader header, String headerSignature, byte[] payload) {
+        Transaction.Builder builder = Transaction.newBuilder();
+        builder.setHeader(header.toByteString());
 
-    public static byte[] getHeaderBytes(TransactionHeader transactionHeader) {
-        return transactionHeader.toByteArray();
+        builder.setHeaderSignature(headerSignature);
+        builder.setPayload(ByteString.copyFrom(payload));
+        return builder.build();
+    }
+    public static TransactionList getTransactionList() {
+        TransactionList.Builder builder = TransactionList.newBuilder();
+
+        return builder.build();
     }
 
-    public static ByteString getHeaderByteString(TransactionHeader transactionHeader) {
-        return transactionHeader.toByteString();
+    public static BatchHeader getBatchHeader(String publicKey, String transactionHeaderSignature) {
+        BatchHeader.Builder builder = BatchHeader.newBuilder();
+        builder.setSignerPublicKey(publicKey);
+        builder.addTransactionIds(transactionHeaderSignature);
+        return builder.build();
+    }
+    public static Batch getBatch(BatchHeader batchHeader, String batchHeaderSignature, Transaction transaction) {
+        Batch.Builder builder = Batch.newBuilder();
+        builder.setHeader(batchHeader.toByteString());
+        builder.setHeaderSignature(batchHeaderSignature);
+        builder.addTransactions(transaction);
+        return builder.build();
+    }
+    public static BatchList getBatchList(Batch batch) {
+        BatchList.Builder builder = BatchList.newBuilder();
+        builder.addBatches(batch);
+        return builder.build();
     }
 
-    public static void sendTransaction(String publicKey) {
+    public static String sign(KeyPair keyPair, byte[] bytes) throws SignatureException, InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException {
+        Signature signature = Signature.getInstance("ECDSA", "SC");
+        signature.initSign(keyPair.getPrivate(), new SecureRandom());
+        signature.update(bytes);
+        byte[] signedBytes = signature.sign();
 
+        return new BigInteger(1, signedBytes).toString(16); //TODO: fix wrong signature
     }
 
-    public static void pin(String hashedMessage) {
-
+    public static String pin(KeyPair keyPair, String hashedMessage) throws SignatureException, InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException {
+        TransactionHeader transactionHeader = getTransactionHeader("pin", hashedMessage);
+        String transactionHeaderSignature = sign(keyPair, transactionHeader.toByteArray());
+        byte[] payload = encodePayload("pin", hashedMessage);
+        Transaction transaction = getTransaction(transactionHeader, transactionHeaderSignature, payload);
+        BatchHeader batchHeader = getBatchHeader(keyPair.getPublic().toString(), transactionHeaderSignature);
+        String batchHeaderSignature = sign(keyPair, batchHeader.toByteArray());
+        Batch batch = getBatch(batchHeader, batchHeaderSignature, transaction);
+        BatchList batchList = getBatchList(batch);
+        byte[] batchListBytes = batchList.toByteArray();
+        return headerSignature;
     }
 
     public static void check(String hashedMessage) {
