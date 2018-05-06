@@ -36,4 +36,5 @@
 
     <string name="custom_message_notification">Message will appear after restart of the app</string>
     <string name="copied">Copied to clipboard</string>
+    <string name="error">Error!</string>
 </resources>
