@@ -16,6 +16,8 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.Security;
 import java.util.List;
 import android.content.SharedPreferences;
@@ -32,7 +34,8 @@ public class MainActivity extends AppCompatActivity {
     MessageAdapter messageAdapter;
     public static MainActivity context;
     private SharedPreferences sharedPreferences;
-
+    public PublicKey publicKey;
+    public PrivateKey privateKey;
     private String keyPublic, keyPrivate;
     private static byte[] keyPublicHex, keyPrivateHex;
 
