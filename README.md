@@ -18,6 +18,8 @@ This version of the app can:
 -------------
 - Add custom message creation (Settings -> Add custom message)
 - Add full algorithm to assemble transactions and batches
+- Add class for HTTP POST request, don't know does it work
+- Add test pin() functional
 - Fix wrong message hash
 - Fix wrong getAddress()
 
