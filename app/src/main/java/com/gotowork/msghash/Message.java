@@ -43,23 +43,14 @@ public class Message extends SugarRecord<Message> {
     }
 
     public boolean pin(KeyPair keyPair) {
-        isPinned = true;
-        save();
         try {
             Sawtooth.pin(keyPair, hash);
+            isPinned = true;
+            save();
             return true;
         }
-        catch (SignatureException e) {
-            Toast.makeText(MainActivity.context, e.getMessage(), Toast.LENGTH_LONG).show();
-        }
-        catch (InvalidKeyException e) {
-            Toast.makeText(MainActivity.context, e.getMessage(), Toast.LENGTH_LONG).show();
-        }
-        catch (NoSuchAlgorithmException e) {
-            Toast.makeText(MainActivity.context, e.getMessage(), Toast.LENGTH_LONG).show();
-        }
-        catch (NoSuchProviderException e) {
-            Toast.makeText(MainActivity.context, e.getMessage(), Toast.LENGTH_LONG).show();
+        catch (Exception e) {
+            Toast.makeText(MainActivity.context, e.getMessage() + " " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
         }
         return false;
     }
