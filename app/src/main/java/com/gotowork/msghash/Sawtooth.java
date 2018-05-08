@@ -1,36 +1,28 @@
 package com.gotowork.msghash;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.google.protobuf.ByteString;
 
-import org.spongycastle.jce.ECNamedCurveTable;
-import org.spongycastle.jce.interfaces.ECPrivateKey;
-import org.spongycastle.math.ec.ECPoint;
-import org.spongycastle.util.encoders.Hex;
-
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
-import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.spec.ECGenParameterSpec;
-import java.security.spec.ECParameterSpec;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
+
+import co.nstant.in.cbor.CborException;
 import sawtooth.sdk.protobuf.BatchList;
 import sawtooth.sdk.protobuf.BatchHeader;
 import sawtooth.sdk.protobuf.Transaction;
@@ -39,6 +31,8 @@ import sawtooth.sdk.protobuf.Batch;
 import co.nstant.in.cbor.CborBuilder;
 import co.nstant.in.cbor.CborEncoder;
 import sawtooth.sdk.protobuf.TransactionList;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class Sawtooth { //TODO: change all funcs to private (except pin & check)
     public static KeyPair getKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
@@ -53,14 +47,9 @@ public class Sawtooth { //TODO: change all funcs to private (except pin & check)
         String privateKey = temp[1];
     }
 
-    public static byte[] encodePayload(String verb, String hash) {
+    public static byte[] encodePayload(String verb, String hash) throws CborException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        try {
-            new CborEncoder(byteArrayOutputStream).encode(new CborBuilder().addMap().put("Verb", verb).put("Message", hash).end().build());
-        }
-        catch (Exception e) {
-            Toast.makeText(MainActivity.context, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-        }
+        new CborEncoder(byteArrayOutputStream).encode(new CborBuilder().addMap().put("Verb", verb).put("Message", hash).end().build());
         return byteArrayOutputStream.toByteArray();
     }
 
@@ -134,7 +123,7 @@ public class Sawtooth { //TODO: change all funcs to private (except pin & check)
         return new BigInteger(1, signedBytes).toString(16); //TODO: fix wrong signature
     }
 
-    public static void pin(KeyPair keyPair, String hashedMessage) throws SignatureException, InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException {
+    public static void pin(KeyPair keyPair, String hashedMessage) throws CborException, SignatureException, InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, IOException {
         TransactionHeader transactionHeader = getTransactionHeader("pin", hashedMessage);
         String transactionHeaderSignature = sign(keyPair, transactionHeader.toByteArray());
         byte[] payload = encodePayload("pin", hashedMessage);
@@ -144,6 +133,12 @@ public class Sawtooth { //TODO: change all funcs to private (except pin & check)
         Batch batch = getBatch(batchHeader, batchHeaderSignature, transaction);
         BatchList batchList = getBatchList(batch);
         byte[] batchListBytes = batchList.toByteArray();
+
+        HTTPParser httpParser = new HTTPParser();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.context);
+        String url = sharedPreferences.getString("url", "0.0.0.0");
+        int port = sharedPreferences.getInt("port", 1234);
+        httpParser.sendRequest(batchListBytes, url, port);
         //return headerSignature;
     }
 

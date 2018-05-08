@@ -19,8 +19,8 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HTTPRequest {
-    public HTTPRequest() {
+public class HTTPParser {
+    public HTTPParser() {
 
     }
 
