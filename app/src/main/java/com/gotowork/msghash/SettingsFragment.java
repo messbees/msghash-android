@@ -19,6 +19,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 
+import co.nstant.in.cbor.CborException;
 import sawtooth.sdk.protobuf.TransactionHeader;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -32,7 +33,20 @@ public class SettingsFragment extends PreferenceFragment {
 
         addPreferencesFromResource(R.xml.settings);
 
-
+        findPreference("url").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                //TODO: check if URL is correct
+                return false;
+            }
+        });
+        findPreference("port").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                //TODO: check if port is correct
+                return false;
+            }
+        });
         findPreference("copy_public").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -132,9 +146,15 @@ public class SettingsFragment extends PreferenceFragment {
         findPreference("copy_encoded_payload").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                byte[] bytes = Sawtooth.encodePayload("verb", "message");
-                String string = new String(bytes, StandardCharsets.UTF_8);
-                copy(string);
+                try {
+                    byte[] bytes = Sawtooth.encodePayload("verb", "message");
+
+                    String string = new String(bytes, StandardCharsets.UTF_8);
+                    copy(string);
+                }
+                catch (CborException e) {
+                    Toast.makeText(getActivity(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                }
                 return false;
             }
         });
@@ -142,15 +162,15 @@ public class SettingsFragment extends PreferenceFragment {
         findPreference("copy_hashed_payload").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                byte[] bytes = Sawtooth.encodePayload("verb", "message");
-                String hash = "";
                 try {
+                    byte[] bytes = Sawtooth.encodePayload("verb", "message");
+                    String hash = "";
+                    copy(hash);
                     hash = Hashing.getHash(bytes);
                 }
-                catch (NoSuchAlgorithmException e) {
+                catch (Exception e) {
                     Toast.makeText(getActivity(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                 }
-                copy(hash);
                 return false;
             }
         });

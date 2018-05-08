@@ -11,6 +11,11 @@
     <string name="hash">Hash</string>
     <string name="address">Address</string>
     <string name="message">Message</string>
+    <string name="network">Network</string>
+    <string name="url">URL</string>
+    <string name="url_desc">Define URL of the REST API (including http://)</string>
+    <string name="port">Port</string>
+    <string name="port_desc">Set network post of the REST API</string>
 
     <string name="ok">OK</string>
     <string name="copy">Copy</string>

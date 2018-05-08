@@ -26,8 +26,20 @@
             android:summary="@string/coming_soon">
         </Preference>
     </PreferenceCategory>
-
     <PreferenceCategory
+        android:title="@string/network"
+        android:key="net_cat">
+        <EditTextPreference
+            android:defaultValue='"0.0.0.0"'
+            android:key="url"
+            android:summary="@string/url_desc"
+            android:title="@string/url" />
+        <EditTextPreference
+            android:defaultValue="1234"
+            android:key="port"
+            android:summary="@string/port_desc"
+            android:title="@string/port" />
+    </PreferenceCategory><PreferenceCategory
         android:title="@string/debug"
         android:key="deb_cat">
         <Preference android:title="@string/custom_message"
