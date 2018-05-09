@@ -24,9 +24,3 @@ This version of the app can:
 
 - Fix wrong message hash
 - Fix wrong getAddress()
-
-## Next Versions
--------------
-v0.0.3: Assembled serialized transaction 
-v0.0.4: POST request to REST API
-v0.1: Pin message's hash to blockchain and check whether it is already pinned, also new design
