@@ -14,9 +14,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 
 import co.nstant.in.cbor.CborException;
@@ -51,8 +54,15 @@ public class SettingsFragment extends PreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 SharedPreferences sharedPreferences = MainActivity.context.getPreferences(MODE_PRIVATE);
-                String text = sharedPreferences.getString("public", "");
-                copy(text);
+                Gson gson = new Gson();
+                String json = sharedPreferences.getString("key_pair", "");
+                try {
+                    KeyPair obj = gson.fromJson(json, KeyPair.class);
+                    copy(obj.getPublic().toString());
+                }
+                catch (Exception e) {
+
+                }
                 return false;
             }
         });
@@ -61,28 +71,15 @@ public class SettingsFragment extends PreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 SharedPreferences sharedPreferences = MainActivity.context.getPreferences(MODE_PRIVATE);
-                String text = sharedPreferences.getString("private", "");
-                copy(text);
-                return false;
-            }
-        });
+                Gson gson = new Gson();
+                String json = sharedPreferences.getString("key_pair", "");
+                try {
+                    KeyPair obj = gson.fromJson(json, KeyPair.class);
+                    copy(obj.getPrivate().toString());
+                }
+                catch (Exception e) {
 
-        findPreference("copy_public_hex").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                SharedPreferences sharedPreferences = MainActivity.context.getPreferences(MODE_PRIVATE);
-                String text = sharedPreferences.getString("public_hex", "");
-                copy(text);
-                return false;
-            }
-        });
-
-        findPreference("copy_private_hex").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                SharedPreferences sharedPreferences = MainActivity.context.getPreferences(MODE_PRIVATE);
-                String text = sharedPreferences.getString("private_hex", "");
-                copy(text);
+                }
                 return false;
             }
         });
@@ -178,8 +175,14 @@ public class SettingsFragment extends PreferenceFragment {
         findPreference("copy_serialized_header").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                TransactionHeader transactionHeader = Sawtooth.getTransactionHeader("verb", "e8730de8aa77d74a251c08616479058c104bf9d15bd5cf684d6e5eee45353387");
-                copy(new String(transactionHeader.toByteArray(), StandardCharsets.UTF_8));
+                try {
+                    TransactionHeader transactionHeader = Sawtooth.getTransactionHeader("verb", "e8730de8aa77d74a251c08616479058c104bf9d15bd5cf684d6e5eee45353387");
+                    copy(new String(transactionHeader.toByteArray(), StandardCharsets.UTF_8));
+                }
+                catch (CborException e) {
+                    Toast.makeText(getActivity(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                }
+
                 return false;
             }
         });
