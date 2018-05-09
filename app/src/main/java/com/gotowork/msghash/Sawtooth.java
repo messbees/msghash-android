@@ -59,7 +59,7 @@ public class Sawtooth { //TODO: change all funcs to private (except pin & check)
         return prefix + address;
     }
 
-    public static TransactionHeader getTransactionHeader(String verb, String hashedMessage) {
+    public static TransactionHeader getTransactionHeader(String verb, String hashedMessage) throws CborException {
         TransactionHeader.Builder builder = TransactionHeader.newBuilder();
         String key = "1cf1266e282c41be5e4254d8820772c5518a2c5a8c0c7f7eda19594a7eb539453e1ed7"; //TODO: add batcher public key
         builder.setBatcherPublicKey(key);
