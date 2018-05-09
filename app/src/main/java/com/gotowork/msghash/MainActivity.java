@@ -22,10 +22,13 @@ import java.security.Security;
 import java.util.List;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import com.google.gson.Gson;
 import net.hockeyapp.android.CrashManager;
 
 public class MainActivity extends AppCompatActivity {
-
+    private static final String FIRST = "first";
+    private static final String NORMAL = "normal";
+    private static final String UPDATE = "update";
     public EditText editText, editName;
     public Button buttonSend;
 
@@ -34,11 +37,8 @@ public class MainActivity extends AppCompatActivity {
     MessageAdapter messageAdapter;
     public static MainActivity context;
     private SharedPreferences sharedPreferences;
-    public PublicKey publicKey;
-    public PrivateKey privateKey;
-    private String keyPublic, keyPrivate;
-    private static byte[] keyPublicHex, keyPrivateHex;
     private KeyPair keyPair;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,28 +48,11 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         Security.insertProviderAt(new org.spongycastle.jce.provider.BouncyCastleProvider(), 1);
-        KeyPair keyPair;
-        loadKeys();
 
-        loadMessages();
+        load();
         initializeComponents();
     }
-    private void loadMessages() {
-        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
-        messages = Message.listAll(Message.class);
-        if (sharedPreferences.getBoolean("first_launch", true)) {
-            Message message = new Message("messbees", "Welcome!");
-            messages.add(message);
-            message.save();
-            Editor editor = sharedPreferences.edit();
-            editor.putBoolean("first_launch", false);
-            editor.apply();
-        }
 
-        messageAdapter = new MessageAdapter(this, messages, keyPair);
-        messageAdapter.update();
-
-    }
     private void initializeComponents() {
         editText = (EditText) findViewById(R.id.editText);
         editName = (EditText) findViewById(R.id.editName);
@@ -95,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -108,42 +92,62 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void saveKeys() {
+    private void save() {
         sharedPreferences = getPreferences(MODE_PRIVATE);
         Editor editor = sharedPreferences.edit();
-        editor.putString("private", keyPrivate);
-        editor.putString("public", keyPublic);
-        String keyPrivateHexString = new String(keyPrivateHex, StandardCharsets.UTF_8);
-        editor.putString("private_hex", keyPrivateHexString);
-        String keyPublicHexString = new String(keyPublicHex, StandardCharsets.UTF_8);
-        editor.putString("public_hex", keyPublicHexString);
-
+        Gson gson = new Gson();
+        String json = gson.toJson(keyPair);
+        editor.putString("key_pair", json);
         editor.apply();
     }
-    private void loadKeys() {
-        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
-        keyPrivate = sharedPreferences.getString("private", "");
-        keyPublic = sharedPreferences.getString("public", "");
-        if (keyPublic.equals("") || keyPrivate.equals("")) {
+
+    private void load() {
+        if (checkFirstRun().equals(FIRST)) {
+            makeToast("First launch");
+            if (generateKeys()) {
+                save();
+                Message message = new Message("messbees", "Welcome!");
+                message.save();
+
+                try {
+                    messages = Message.listAll(Message.class);
+                }
+                catch (Exception e) {
+
+                }
+            } else {
+                forceStop();
+            }
+        } else {
+            makeToast("not first launch");
+            messages = Message.listAll(Message.class);
+            Gson gson = new Gson();
+            String json = sharedPreferences.getString("key_pair", "");
             try {
-                KeyPair k = Sawtooth.getKeyPair();
-                keyPair= k;
-                keyPrivate = keyPair.getPrivate().toString();
-                keyPrivateHex = keyPair.getPrivate().getEncoded();
-                keyPublic = keyPair.getPublic().toString();
-                keyPublicHex = keyPair.getPublic().getEncoded();
-                saveKeys();
-            }
-            catch (NoSuchAlgorithmException e) {
-                makeToast(e.getMessage());
-            }
-            catch (NoSuchProviderException e) {
-                makeToast(e.getMessage());
-            }
-            catch (InvalidAlgorithmParameterException e) {
-                makeToast(e.getMessage());
+                keyPair = gson.fromJson(json, KeyPair.class);
+            } catch (Exception e) {
+                makeToast("Failed to load: " + e.getLocalizedMessage() + "\n" + "Generating new keys...");
+                if (!generateKeys()) {
+                    forceStop();
+                }
             }
         }
+        messageAdapter = new MessageAdapter(this, messages, keyPair);
+        messageAdapter.update();
+    }
+
+    private boolean generateKeys() {
+        try {
+            keyPair = Sawtooth.getKeyPair();
+            return true;
+        } catch (NoSuchAlgorithmException e) {
+            makeToast(e.getMessage());
+        } catch (NoSuchProviderException e) {
+            makeToast(e.getMessage());
+        } catch (InvalidAlgorithmParameterException e) {
+            makeToast(e.getMessage());
+        }
+        return false;
     }
 
     private void makeToast(String message) {
@@ -155,7 +159,47 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         checkForCrashes();
     }
+
     private void checkForCrashes() {
         CrashManager.register(this);
+    }
+
+    private void forceStop() {
+        finish();
+        System.exit(0);
+    }
+
+    private String checkFirstRun() {
+
+        final String PREFS_NAME = "PrefsFile";
+        final String PREF_VERSION_CODE_KEY = "version_code";
+        final int DOESNT_EXIST = -1;
+
+        // Get current version code
+        int currentVersionCode = BuildConfig.VERSION_CODE;
+
+        // Get saved version code
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        int savedVersionCode = prefs.getInt(PREF_VERSION_CODE_KEY, DOESNT_EXIST);
+
+        // Check for first run or upgrade
+        if (savedVersionCode == DOESNT_EXIST) {
+            prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).apply();
+            return FIRST;
+        }
+        else {
+            if(currentVersionCode > savedVersionCode) {
+                prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).apply();
+                return UPDATE;
+            }
+            else if (currentVersionCode > savedVersionCode){
+                return "WTF";
+            }
+            else {
+                prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).apply();
+                return NORMAL;
+            }
+        }
+
     }
 }
