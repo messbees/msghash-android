@@ -12,7 +12,7 @@ android {
         applicationId "com.gotowork.msghash"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 35
+        versionCode 44
         versionName "0.0.3-debug"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [HOCKEYAPP_APP_ID: "60e9788b4f3d455197689ba0061529e8"]
@@ -51,6 +51,7 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    compile 'com.google.code.gson:gson:2.8.0'
     compile 'net.hockeyapp.android:HockeySDK:5.1.0'
     compile 'com.google.protobuf:protobuf-lite:3.0.0'
     //implementation 'com.google.protobuf:protobuf-lite:3.0.0'
@@ -68,5 +69,4 @@ dependencies {
     compile 'com.android.support:appcompat-v7:26.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
-    compile 'com.mcxiaoke.volley:library:1.0.19'
 }
