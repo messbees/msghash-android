@@ -6,6 +6,8 @@ import android.widget.Toast;
 
 import com.google.protobuf.ByteString;
 
+import org.bitcoinj.core.ECKey;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -41,6 +43,7 @@ public class Sawtooth { //TODO: change all funcs to private (except pin & check)
         keyPairGenerator.initialize(ecGenParameterSpec, new SecureRandom());
         return keyPairGenerator.generateKeyPair();
     }
+
 
     public static void getPrivateKey(KeyPair keyPair) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         String[] temp = keyPair.getPrivate().toString().split(" S: ");
@@ -114,21 +117,16 @@ public class Sawtooth { //TODO: change all funcs to private (except pin & check)
         return builder.build();
     }
 
-    public static String sign(KeyPair keyPair, byte[] bytes) throws SignatureException, InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException {
-        Signature signature = Signature.getInstance("ECDSA", "SC");
-        signature.initSign(keyPair.getPrivate(), new SecureRandom());
-        signature.update(bytes);
-        byte[] signedBytes = signature.sign();
-
-        return new BigInteger(1, signedBytes).toString(16); //TODO: fix wrong signature
+    public static String sign(ECKey privateKey, byte[] bytes) {
+        return Signing.sign(privateKey, bytes);
     }
 
-    public static void pin(KeyPair keyPair, String hashedMessage) throws CborException, SignatureException, InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, IOException {
+    public static void pin(ECKey keyPair, String hashedMessage) throws CborException, SignatureException, InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, IOException {
         TransactionHeader transactionHeader = getTransactionHeader("pin", hashedMessage);
         String transactionHeaderSignature = sign(keyPair, transactionHeader.toByteArray());
         byte[] payload = encodePayload("pin", hashedMessage);
         Transaction transaction = getTransaction(transactionHeader, transactionHeaderSignature, payload);
-        BatchHeader batchHeader = getBatchHeader(keyPair.getPublic().toString(), transactionHeaderSignature);
+        BatchHeader batchHeader = getBatchHeader(keyPair.getPublicKeyAsHex(), transactionHeaderSignature);
         String batchHeaderSignature = sign(keyPair, batchHeader.toByteArray());
         Batch batch = getBatch(batchHeader, batchHeaderSignature, transaction);
         BatchList batchList = getBatchList(batch);

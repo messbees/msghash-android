@@ -18,12 +18,14 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.security.Security;
 import java.util.List;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import com.google.gson.Gson;
 import net.hockeyapp.android.CrashManager;
+
+import org.bitcoinj.core.ECKey;
 
 public class MainActivity extends AppCompatActivity {
     private static final String FIRST = "first";
@@ -38,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     public static MainActivity context;
     private SharedPreferences sharedPreferences;
     private KeyPair keyPair;
+    private ECKey privateKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,9 +98,7 @@ public class MainActivity extends AppCompatActivity {
     private void save() {
         sharedPreferences = getPreferences(MODE_PRIVATE);
         Editor editor = sharedPreferences.edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(keyPair);
-        editor.putString("key_pair", json);
+        editor.putString("key_pair", new String(privateKey.getPrivKeyBytes()));
         editor.apply();
     }
 
@@ -121,33 +122,19 @@ public class MainActivity extends AppCompatActivity {
         } else {
             makeToast("not first launch");
             messages = Message.listAll(Message.class);
-            Gson gson = new Gson();
-            String json = sharedPreferences.getString("key_pair", "");
-            try {
-                keyPair = gson.fromJson(json, KeyPair.class);
-            } catch (Exception e) {
-                makeToast("Failed to load: " + e.getLocalizedMessage() + "\n" + "Generating new keys...");
-                if (!generateKeys()) {
-                    forceStop();
-                }
-            }
+            String keyString = sharedPreferences.getString("key_pair", "");
+            privateKey = ECKey.fromPrivate(keyString.getBytes());
         }
-        messageAdapter = new MessageAdapter(this, messages, keyPair);
+        messageAdapter = new MessageAdapter(this, messages, privateKey);
         messageAdapter.update();
     }
 
     private boolean generateKeys() {
-        try {
-            keyPair = Sawtooth.getKeyPair();
+        privateKey = Signing.generatePrivateKey(new SecureRandom());
+        if (privateKey.getPrivKeyBytes() == (new String(privateKey.getPrivKeyBytes())).getBytes())
             return true;
-        } catch (NoSuchAlgorithmException e) {
-            makeToast(e.getMessage());
-        } catch (NoSuchProviderException e) {
-            makeToast(e.getMessage());
-        } catch (InvalidAlgorithmParameterException e) {
-            makeToast(e.getMessage());
-        }
-        return false;
+        else
+            return false;
     }
 
     private void makeToast(String message) {

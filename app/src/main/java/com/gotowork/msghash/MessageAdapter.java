@@ -17,12 +17,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.spongycastle.jce.interfaces.ECKey;
+
 public class MessageAdapter extends BaseAdapter {
     Context ctx;
     LayoutInflater lInflater;
     List<Message> objects;
-    KeyPair keyPair;
-    MessageAdapter(Context context, List<Message> messages, KeyPair k) {
+    org.bitcoinj.core.ECKey keyPair;
+    MessageAdapter(Context context, List<Message> messages, org.bitcoinj.core.ECKey k) {
         ctx = context;
         keyPair = k;
         objects = messages;
