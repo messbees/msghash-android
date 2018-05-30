@@ -13,23 +13,30 @@
             android:key="copy_private">
         </Preference>
         <Preference
-            android:title="@string/copy_public_hex"
-            android:key="copy_private_hex">
-        </Preference>
-        <Preference
-            android:title="@string/copy_private_hex"
-            android:key="copy_public_hex">
-        </Preference>
-        <Preference
             android:title="@string/set_keys"
             android:key="set_keys"
             android:summary="@string/coming_soon">
         </Preference>
     </PreferenceCategory>
-
     <PreferenceCategory
+        android:title="@string/network"
+        android:key="net_cat">
+        <EditTextPreference
+            android:defaultValue='"0.0.0.0"'
+            android:key="url"
+            android:summary="@string/url_desc"
+            android:title="@string/url" />
+        <EditTextPreference
+            android:defaultValue="1234"
+            android:key="port"
+            android:summary="@string/port_desc"
+            android:title="@string/port" />
+    </PreferenceCategory><PreferenceCategory
         android:title="@string/debug"
         android:key="deb_cat">
+        <Preference android:title="@string/custom_message"
+            android:key="custom_message"
+            android:summary="@string/custom_message_sum"/>
         <Preference android:title="@string/check_hash"
             android:key="check_hash"
             android:summary="@string/check_hash_desc"/>
@@ -37,8 +44,10 @@
             android:key="copy_encoded_payload"/>
         <Preference android:title="Copy hashed sample payload"
             android:key="copy_hashed_payload"/>
-        <Preference android:title="Copy hexed sample payload"
-            android:key="copy_hexed_payload"/>
+        <Preference android:title="Copy serialized TransactionHeader"
+            android:key="copy_serialized_header"/>
+        <Preference android:title="Copy signed TransactionHeader"
+            android:key="copy_signed_header"/>
         <Preference android:title="Copy generated address"
             android:key="copy_address"/>
 

@@ -1,4 +1,4 @@
-# MsgHash v0.0.2
+# MsgHash v0.0.3-debug
 -------------
 
 ## Download:
@@ -16,10 +16,11 @@ This version of the app can:
 
 ## Changelog
 -------------
-- Fix bug that caused crash on start
-- Add more funcs to Sawtooth.java (WIP)
+- Add custom message creation (Settings -> Add custom message)
+- Add full algorithm to assemble transactions and batches
+- Add class for HTTP POST request, don't know does it work
+- Add test pin() functional
+- Rework save/load of keypair
 
-## Next Versions
--------------
-v0.0.3: Fully assemble TransactionHeader + sign it with ECDSA spec256k1 key;
-v0.1: Pin message's hash to blockchain and check whether it is already pinned, also new design
+- Fix wrong message hash
+- Fix wrong getAddress()
