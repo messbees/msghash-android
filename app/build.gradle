@@ -9,10 +9,11 @@ android {
     compileSdkVersion 26
     buildToolsVersion "26.0.0"
     defaultConfig {
+        multiDexEnabled  true
         applicationId "com.gotowork.msghash"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 44
+        versionCode 56
         versionName "0.0.3-debug"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [HOCKEYAPP_APP_ID: "60e9788b4f3d455197689ba0061529e8"]
@@ -51,14 +52,14 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.google.code.gson:gson:2.8.0'
     compile 'net.hockeyapp.android:HockeySDK:5.1.0'
     compile 'com.google.protobuf:protobuf-lite:3.0.0'
+    compile 'org.bitcoinj:bitcoinj-core:0.14.7'
     //implementation 'com.google.protobuf:protobuf-lite:3.0.0'
     compile 'com.android.support:preference-v7:23.4.0'
     //TODO: fix this
+    //compile 'com.android.support:multidex:1.0.3'
     compile 'co.nstant.in:cbor:0.8'
-    //Cbor library
     compile 'com.madgag.spongycastle:core:1.54.0.0'
     //SpongyCastle library for encrytpion
     compile 'com.madgag.spongycastle:prov:1.54.0.0'
