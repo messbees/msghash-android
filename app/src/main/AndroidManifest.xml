@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.gotowork.msghash">
-
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
     <application
         android:name="com.orm.SugarApp"
         android:allowBackup="true"
@@ -14,9 +14,10 @@
         tools:replace="android:icon">
         <meta-data android:name="net.hockeyapp.android.appIdentifier" android:value="${HOCKEYAPP_APP_ID}" />
         <meta-data android:name="DATABASE" android:value="messages.db" />
-        <meta-data android:name="VERSION" android:value="2" />
+        <meta-data android:name="VERSION" android:value="3" />
         <meta-data android:name="QUERY_LOG" android:value="true" />
         <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="com.gotowork.msghash" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

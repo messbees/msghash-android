@@ -9,12 +9,21 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
+
+import co.nstant.in.cbor.CborException;
+import sawtooth.sdk.protobuf.TransactionHeader;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -27,13 +36,33 @@ public class SettingsFragment extends PreferenceFragment {
 
         addPreferencesFromResource(R.xml.settings);
 
-
+        findPreference("url").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                //TODO: check if URL is correct
+                return false;
+            }
+        });
+        findPreference("port").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                //TODO: check if port is correct
+                return false;
+            }
+        });
         findPreference("copy_public").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 SharedPreferences sharedPreferences = MainActivity.context.getPreferences(MODE_PRIVATE);
-                String text = sharedPreferences.getString("public", "");
-                copy(text);
+                Gson gson = new Gson();
+                String json = sharedPreferences.getString("key_pair", "");
+                try {
+                    KeyPair obj = gson.fromJson(json, KeyPair.class);
+                    copy(obj.getPublic().toString());
+                }
+                catch (Exception e) {
+
+                }
                 return false;
             }
         });
@@ -42,28 +71,15 @@ public class SettingsFragment extends PreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 SharedPreferences sharedPreferences = MainActivity.context.getPreferences(MODE_PRIVATE);
-                String text = sharedPreferences.getString("private", "");
-                copy(text);
-                return false;
-            }
-        });
+                Gson gson = new Gson();
+                String json = sharedPreferences.getString("key_pair", "");
+                try {
+                    KeyPair obj = gson.fromJson(json, KeyPair.class);
+                    copy(obj.getPrivate().toString());
+                }
+                catch (Exception e) {
 
-        findPreference("copy_public_hex").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                SharedPreferences sharedPreferences = MainActivity.context.getPreferences(MODE_PRIVATE);
-                String text = sharedPreferences.getString("public_hex", "");
-                copy(text);
-                return false;
-            }
-        });
-
-        findPreference("copy_private_hex").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                SharedPreferences sharedPreferences = MainActivity.context.getPreferences(MODE_PRIVATE);
-                String text = sharedPreferences.getString("private_hex", "");
-                copy(text);
+                }
                 return false;
             }
         });
@@ -92,12 +108,50 @@ public class SettingsFragment extends PreferenceFragment {
             }
         });
 
+        findPreference("custom_message").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle(getString(R.string.custom_message));
+                final View view = (LinearLayout) getActivity().getLayoutInflater()
+                        .inflate(R.layout.dialog_custom_message, null);
+                builder.setView(view);
+                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String name = ((EditText) view.findViewById(R.id.customMsgName)).getText().toString();
+                        String text = ((EditText) view.findViewById(R.id.customMsgText)).getText().toString();
+                        String time = ((EditText) view.findViewById(R.id.customMsgTime)).getText().toString();
+                        String fullTime = ((EditText) view.findViewById(R.id.customMsgDate)).getText().toString();
+                        Message message = new Message(name, text, time, fullTime);
+                        message.save();
+                        Toast.makeText(getActivity(), R.string.custom_message_notification, Toast.LENGTH_LONG).show();
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+                return false;
+            }
+        });
+
         findPreference("copy_encoded_payload").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                byte[] bytes = Sawtooth.encodePayload("verb", "message");
-                String string = new String(bytes, StandardCharsets.UTF_8);
-                copy(string);
+                try {
+                    byte[] bytes = Sawtooth.encodePayload("verb", "message");
+
+                    String string = new String(bytes, StandardCharsets.UTF_8);
+                    copy(string);
+                }
+                catch (CborException e) {
+                    Toast.makeText(getActivity(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                }
                 return false;
             }
         });
@@ -105,27 +159,43 @@ public class SettingsFragment extends PreferenceFragment {
         findPreference("copy_hashed_payload").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                byte[] bytes = Sawtooth.encodePayload("verb", "message");
-                String hash = "";
                 try {
+                    byte[] bytes = Sawtooth.encodePayload("verb", "message");
+                    String hash = "";
+                    copy(hash);
                     hash = Hashing.getHash(bytes);
                 }
-                catch (NoSuchAlgorithmException e) {
+                catch (Exception e) {
                     Toast.makeText(getActivity(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                 }
-                copy(hash);
                 return false;
             }
         });
 
-        findPreference("copy_hexed_payload").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        findPreference("copy_serialized_header").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                byte[] bytes = Sawtooth.encodePayload("verb", "message");
-                String string = new String(bytes, StandardCharsets.UTF_8);
-                String hash = Hashing.getHash(string);
-                String hex = String.format("%040x", new BigInteger(1, hash.getBytes(StandardCharsets.UTF_8)));
-                copy(hex);
+                try {
+                    TransactionHeader transactionHeader = Sawtooth.getTransactionHeader("verb", "e8730de8aa77d74a251c08616479058c104bf9d15bd5cf684d6e5eee45353387");
+                    copy(new String(transactionHeader.toByteArray(), StandardCharsets.UTF_8));
+                }
+                catch (CborException e) {
+                    Toast.makeText(getActivity(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                }
+
+                return false;
+            }
+        });
+
+        findPreference("copy_signed_header").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                try {
+
+                }
+                catch (Exception e) {
+                    copy(getActivity().getString(R.string.error));
+                }
                 return false;
             }
         });
@@ -133,7 +203,7 @@ public class SettingsFragment extends PreferenceFragment {
         findPreference("copy_address").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                copy(Sawtooth.getAddress("hello"));
+                copy(Sawtooth.getAddress("testTexttestName04/05/2018 16:48"));
                 return false;
             }
         });

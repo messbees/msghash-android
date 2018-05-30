@@ -1,21 +1,30 @@
 package com.gotowork.msghash;
 
+import java.security.KeyPair;
 import java.util.List;
+
+import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MessageAdapter extends BaseAdapter {
     Context ctx;
     LayoutInflater lInflater;
     List<Message> objects;
-
-    MessageAdapter(Context context, List<Message> messages) {
+    KeyPair keyPair;
+    MessageAdapter(Context context, List<Message> messages, KeyPair k) {
         ctx = context;
+        keyPair = k;
         objects = messages;
         lInflater = (LayoutInflater) ctx
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -44,7 +53,44 @@ public class MessageAdapter extends BaseAdapter {
         }
 
         final Message message = getMessage(position);
+        final LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.messageView);
+        linearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+                builder.setTitle(ctx.getString(R.string.message));
+                final String address = Sawtooth.getAddress(message.getHash());
+                String dialogMessage = ctx.getString(R.string.hash) + ": \n" + message.getHash() + "\n\n" + ctx.getString(R.string.address) + ": \n" + address;
+                dialogMessage += "\n\n" + message.getText()+message.getName()+message.getFullTime(); //TODO: remove this
+                builder.setMessage(dialogMessage);
+                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
 
+                    }
+                });
+                builder.setNegativeButton(R.string.copy_hash, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        ClipboardManager clipboard = (ClipboardManager)ctx.getSystemService(Context.CLIPBOARD_SERVICE);
+                        ClipData clip = ClipData.newPlainText("simple text", message.getHash());
+                        clipboard.setPrimaryClip(clip);
+                        Toast.makeText(ctx, R.string.copied, Toast.LENGTH_LONG).show();
+                    }
+                });
+                builder.setNeutralButton(R.string.copy_address, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        ClipboardManager clipboard = (ClipboardManager)ctx.getSystemService(Context.CLIPBOARD_SERVICE);
+                        ClipData clip = ClipData.newPlainText("simple text", address);
+                        clipboard.setPrimaryClip(clip);
+                        Toast.makeText(ctx, R.string.copied, Toast.LENGTH_LONG).show();
+                    }
+                });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }
+        });
         final Button buttonDelete = (Button) view.findViewById(R.id.buttonDelete);
         final Button buttonPin = (Button) view.findViewById(R.id.buttonPin);
         ((TextView) view.findViewById(R.id.messageName)).setText(message.getName());
@@ -74,10 +120,11 @@ public class MessageAdapter extends BaseAdapter {
         buttonPin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                message.pin();
-                buttonDelete.setEnabled(false);
-                buttonPin.setEnabled(false);
-                update();
+                if (message.pin(keyPair)) {
+                    buttonDelete.setEnabled(false);
+                    buttonPin.setEnabled(false);
+                    update();
+                }
             }
         });
 

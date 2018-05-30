@@ -1,7 +1,15 @@
 package com.gotowork.msghash;
 
+import android.widget.Toast;
+
 import com.orm.SugarRecord;
 
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SignatureException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -25,11 +33,26 @@ public class Message extends SugarRecord<Message> {
         setTime();
         setHash();
     }
+    public Message (String name, String text, String time, String fullTime) {
+        this.name = name;
+        this.text = text;
+        this.isPinned = false;
+        this.fullTime = fullTime;
+        this.time = time;
+        setHash();
+    }
 
-    public void pin() {
-        isPinned = true;
-        save();
-        Sawtooth.pin(hash);
+    public boolean pin(KeyPair keyPair) {
+        try {
+            Sawtooth.pin(keyPair, hash);
+            isPinned = true;
+            save();
+            return true;
+        }
+        catch (Exception e) {
+            Toast.makeText(MainActivity.context, e.getMessage() + " " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+        }
+        return false;
     }
 
     public boolean checkPinned() {
@@ -83,9 +106,14 @@ public class Message extends SugarRecord<Message> {
         String temp = "";
         temp += text;
         temp += name;
-        temp += time;
-        temp = Hashing.getHash(temp);
-        this.hash = temp;
+        temp += fullTime;
+        try {
+            temp = Hashing.getHash(temp.getBytes(StandardCharsets.UTF_8));
+        }
+        catch (NoSuchAlgorithmException e) {
+            //sad =(
+        }
+        this.hash = temp.substring(64);
     }
 
     public String getName() {
