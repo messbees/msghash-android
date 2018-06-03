@@ -130,7 +130,7 @@ public class Sawtooth { //TODO: change all funcs to private (except pin & check)
         String transactionHeaderSignature = Signing.sign(keyPair, transactionHeader.toByteArray());
         byte[] payload = encodePayload("pin", hashedMessage);
         Transaction transaction = getTransaction(transactionHeader, transactionHeaderSignature, payload);
-        BatchHeader batchHeader = getBatchHeader(keyPair.getPublicKeyAsHex(), transactionHeaderSignature);
+        BatchHeader batchHeader = getBatchHeader(Signing.getPublicKey(keyPair), transactionHeaderSignature);
         String batchHeaderSignature = Signing.sign(keyPair, batchHeader.toByteArray());
         Batch batch = getBatch(batchHeader, batchHeaderSignature, transaction);
         BatchList batchList = getBatchList(batch);
