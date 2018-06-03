@@ -14,7 +14,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
+import org.bitcoinj.core.ECKey;
 
 import java.math.BigInteger;
 import java.nio.charset.Charset;
@@ -54,15 +54,10 @@ public class SettingsFragment extends PreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 SharedPreferences sharedPreferences = MainActivity.context.getPreferences(MODE_PRIVATE);
-                Gson gson = new Gson();
-                String json = sharedPreferences.getString("key_pair", "");
-                try {
-                    KeyPair obj = gson.fromJson(json, KeyPair.class);
-                    copy(obj.getPublic().toString());
-                }
-                catch (Exception e) {
 
-                }
+                String key = sharedPreferences.getString("key_pair", "");
+                ECKey k = ECKey.fromPrivate(key.getBytes());
+                copy(k.getPublicKeyAsHex());
                 return false;
             }
         });
@@ -71,15 +66,10 @@ public class SettingsFragment extends PreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 SharedPreferences sharedPreferences = MainActivity.context.getPreferences(MODE_PRIVATE);
-                Gson gson = new Gson();
-                String json = sharedPreferences.getString("key_pair", "");
-                try {
-                    KeyPair obj = gson.fromJson(json, KeyPair.class);
-                    copy(obj.getPrivate().toString());
-                }
-                catch (Exception e) {
 
-                }
+                String key = sharedPreferences.getString("key_pair", "");
+                ECKey k = ECKey.fromPrivate(key.getBytes());
+                copy(k.getPrivateKeyAsHex());
                 return false;
             }
         });
