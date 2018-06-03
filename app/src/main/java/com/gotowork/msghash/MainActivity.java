@@ -18,12 +18,15 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.security.Security;
 import java.util.List;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import com.google.gson.Gson;
 import net.hockeyapp.android.CrashManager;
+
+import org.bitcoinj.core.ECKey;
 
 public class MainActivity extends AppCompatActivity {
     private static final String FIRST = "first";
@@ -37,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     MessageAdapter messageAdapter;
     public static MainActivity context;
     private SharedPreferences sharedPreferences;
-    private KeyPair keyPair;
+    private ECKey keyPair;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,59 +98,36 @@ public class MainActivity extends AppCompatActivity {
     private void save() {
         sharedPreferences = getPreferences(MODE_PRIVATE);
         Editor editor = sharedPreferences.edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(keyPair);
-        editor.putString("key_pair", json);
+        editor.putString("key_pair", new String(keyPair.getPrivKeyBytes()));
         editor.apply();
     }
 
     private void load() {
         if (checkFirstRun().equals(FIRST)) {
             makeToast("First launch");
-            if (generateKeys()) {
-                save();
-                Message message = new Message("messbees", "Welcome!");
-                message.save();
+            generateKeys();
+            save();
+            Message message = new Message("messbees", "Welcome!");
+            message.save();
 
-                try {
-                    messages = Message.listAll(Message.class);
-                }
-                catch (Exception e) {
+            try {
+                messages = Message.listAll(Message.class);
+            }
+            catch (Exception e) {
 
-                }
-            } else {
-                forceStop();
             }
         } else {
             makeToast("not first launch");
             messages = Message.listAll(Message.class);
-            Gson gson = new Gson();
-            String json = sharedPreferences.getString("key_pair", "");
-            try {
-                keyPair = gson.fromJson(json, KeyPair.class);
-            } catch (Exception e) {
-                makeToast("Failed to load: " + e.getLocalizedMessage() + "\n" + "Generating new keys...");
-                if (!generateKeys()) {
-                    forceStop();
-                }
-            }
+            String keyString = sharedPreferences.getString("key_pair", "");
+            keyPair = ECKey.fromPrivate(keyString.getBytes());
         }
         messageAdapter = new MessageAdapter(this, messages, keyPair);
         messageAdapter.update();
     }
 
-    private boolean generateKeys() {
-        try {
-            keyPair = Sawtooth.getKeyPair();
-            return true;
-        } catch (NoSuchAlgorithmException e) {
-            makeToast(e.getMessage());
-        } catch (NoSuchProviderException e) {
-            makeToast(e.getMessage());
-        } catch (InvalidAlgorithmParameterException e) {
-            makeToast(e.getMessage());
-        }
-        return false;
+    private void generateKeys() {
+        keyPair = Signing.generatePrivateKey(new SecureRandom());
     }
 
     private void makeToast(String message) {

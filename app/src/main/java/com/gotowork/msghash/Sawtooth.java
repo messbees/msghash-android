@@ -18,6 +18,8 @@ import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.SignatureException;
+import java.security.interfaces.ECKey;
+
 import java.security.spec.ECGenParameterSpec;
 import java.util.Calendar;
 import java.util.Random;
@@ -123,23 +125,18 @@ public class Sawtooth { //TODO: change all funcs to private (except pin & check)
         return new BigInteger(1, signedBytes).toString(16); //TODO: fix wrong signature
     }
 
-    public static void pin(KeyPair keyPair, String hashedMessage) throws CborException, SignatureException, InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, IOException {
+    public static void pin(org.bitcoinj.core.ECKey keyPair, String hashedMessage) throws CborException, SignatureException, InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, IOException {
         TransactionHeader transactionHeader = getTransactionHeader("pin", hashedMessage);
-        String transactionHeaderSignature = sign(keyPair, transactionHeader.toByteArray());
+        String transactionHeaderSignature = Signing.sign(keyPair, transactionHeader.toByteArray());
         byte[] payload = encodePayload("pin", hashedMessage);
         Transaction transaction = getTransaction(transactionHeader, transactionHeaderSignature, payload);
-        BatchHeader batchHeader = getBatchHeader(keyPair.getPublic().toString(), transactionHeaderSignature);
-        String batchHeaderSignature = sign(keyPair, batchHeader.toByteArray());
+        BatchHeader batchHeader = getBatchHeader(keyPair.getPublicKeyAsHex(), transactionHeaderSignature);
+        String batchHeaderSignature = Signing.sign(keyPair, batchHeader.toByteArray());
         Batch batch = getBatch(batchHeader, batchHeaderSignature, transaction);
         BatchList batchList = getBatchList(batch);
         byte[] batchListBytes = batchList.toByteArray();
 
-        HTTPParser httpParser = new HTTPParser();
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.context);
-        String url = sharedPreferences.getString("url", "0.0.0.0");
-        int port = sharedPreferences.getInt("port", 1234);
-        httpParser.sendRequest(batchListBytes, url, port);
-        //return headerSignature;
+        //TODO post request
     }
 
     public static void check(String hashedMessage) {

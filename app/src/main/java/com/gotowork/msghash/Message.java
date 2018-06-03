@@ -4,6 +4,8 @@ import android.widget.Toast;
 
 import com.orm.SugarRecord;
 
+import org.bitcoinj.core.ECKey;
+
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
@@ -42,7 +44,7 @@ public class Message extends SugarRecord<Message> {
         setHash();
     }
 
-    public boolean pin(KeyPair keyPair) {
+    public boolean pin(ECKey keyPair) {
         try {
             Sawtooth.pin(keyPair, hash);
             isPinned = true;
